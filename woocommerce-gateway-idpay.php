@@ -182,7 +182,6 @@ function woocommerce_gateway_idpay_init()
             {
                 global $woocommerce;
 
-                $woocommerce->session->idpay_order_id = $order_id;
                 $order = new WC_Order($order_id);
                 $currency = $order->get_order_currency();
                 $currency = apply_filters('WC_IDPay_Currency', $currency, $order_id);
@@ -266,7 +265,7 @@ function woocommerce_gateway_idpay_init()
                     return false;
                 }
 
-                $order_id = $woocommerce->session->idpay_order_id;
+                $order_id = $_POST['order_id'];
 
                 if (empty($order_id)) {
                     $this->idpay_display_invalid_order_message();
@@ -277,6 +276,12 @@ function woocommerce_gateway_idpay_init()
                 $order = wc_get_order($order_id);
 
                 if (empty($order)) {
+                    $this->idpay_display_invalid_order_message();
+                    wp_redirect($woocommerce->cart->get_checkout_url());
+                    exit;
+                }
+
+                if (get_post_meta($order_id, '_transaction_id', true) != $_POST['id']) {
                     $this->idpay_display_invalid_order_message();
                     wp_redirect($woocommerce->cart->get_checkout_url());
                     exit;
@@ -371,7 +376,8 @@ function woocommerce_gateway_idpay_init()
                 }
             }
 
-            function idpay_display_invalid_order_message() {
+            function idpay_display_invalid_order_message()
+            {
                 $notice = '';
                 $notice .= 'شماره سفارش ارجاع شده به آن وجود ندارد.';
                 $notice .= '<br/>';
@@ -379,7 +385,8 @@ function woocommerce_gateway_idpay_init()
                 wc_add_notice($notice, 'error');
             }
 
-            function idpay_display_success_message($order_id) {
+            function idpay_display_success_message($order_id)
+            {
                 $track_id = get_post_meta($order_id, 'idpay_track_id', true);
 
                 $notice = wpautop(wptexturize($this->success_massage));
@@ -388,7 +395,8 @@ function woocommerce_gateway_idpay_init()
                 wc_add_notice($notice, 'success');
             }
 
-            function idpay_display_failed_message($order_id) {
+            function idpay_display_failed_message($order_id)
+            {
                 $track_id = get_post_meta($order_id, 'idpay_track_id', true);
 
                 $notice = wpautop(wptexturize($this->failed_massage));

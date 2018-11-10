@@ -334,7 +334,8 @@ function woocommerce_gateway_idpay_init()
                 $inquiry_track_id = empty($result->track_id) ? NULL : $result->track_id;
                 $inquiry_id = empty($result->id) ? NULL : $result->id;
                 $inquiry_order_id = empty($result->order_id) ? NULL : $result->order_id;
-                $inquiry_amount= empty($result->amount) ? NULL : $result->amount;
+                $inquiry_amount = empty($result->amount) ? NULL : $result->amount;
+                $inquiry_card_no = empty($result->card_no) ? NULL : $result->card_no;
                 $inquiry_date = empty($result->date) ? NULL : $result->date;
 
                 $status = ($inquiry_status == 100) ? 'completed' : 'failed';
@@ -346,6 +347,10 @@ function woocommerce_gateway_idpay_init()
                 $note = sprintf('وضعیت پرداخت تراکنش: %s', $inquiry_status);
                 $order->add_order_note($note);
                 update_post_meta($order_id, 'idpay_status', $inquiry_status);
+
+                $note = sprintf('شماره کارت پرداخت کننده: %s', $inquiry_card_no);
+                $order->add_order_note($note);
+                update_post_meta($order_id, 'idpay_card_no', $inquiry_card_no);
 
                 $currency = $order->get_order_currency();
                 $currency = apply_filters('WC_IDPay_Currency', $currency, $order_id);

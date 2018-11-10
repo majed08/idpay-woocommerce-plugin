@@ -23,5 +23,8 @@ License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
 == Changelog ==
 
+= 1.1, October 15, 2018 =
+* ذخیره شماره کارت پرداخت کننده در جزییات سفارش
+
 = 1.0, October 15, 2018 =
 * انتشار اولین نسخه از درگاه پرداخت آیدی پی برای افزونه WooCommerce

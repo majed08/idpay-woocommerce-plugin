@@ -235,11 +235,22 @@ function woocommerce_gateway_idpay_init()
                 curl_close($ch);
 
                 if ($http_status != 201 || empty($result) || empty($result->id) || empty($result->link)) {
-                    $note = sprintf('خطا هنگام ایجاد تراکنش. کد خطا: %s', $http_status);
+                    $note = '';
+                    $note .= 'هنگام ایجاد تراکنش خطا رخ داده است.';
+                    $note .= '<br/>';
+                    $note .= sprintf('وضعیت خطا: %s', $http_status);
                     $order->add_order_note($note);
 
-                    $notice = sprintf('هنگام اتصال به درگاه پرداخت خطای %s رخ داده است', $http_status);
-                    wc_add_notice($notice, 'error');
+                    if (!empty($result->error_code) && !empty($result->error_message)) {
+                        $note = '';
+                        $note .= sprintf('کد خطا: %s', $result->error_code);
+                        $note .= '<br/>';
+                        $note .= sprintf('متن خطا: %s', $result->error_message);
+                        $order->add_order_note($note);
+
+                        $notice = $result->error_message;
+                        wc_add_notice($notice, 'error');
+                    }
 
                     return false;
                 }
@@ -317,14 +328,22 @@ function woocommerce_gateway_idpay_init()
                 curl_close($ch);
 
                 if ($http_status != 200) {
-                    $note = sprintf('خطا هنگام بررسی وضعیت تراکنش. کد خطا: %s', $http_status);
+                    $note = '';
+                    $note .= 'هنگام بررسی وضعیت تراکنش خطا رخ داده است.';
+                    $note .= '<br/>';
+                    $note .= sprintf('وضعیت خطا: %s', $http_status);
                     $order->add_order_note($note);
 
-                    $notice = '';
-                    $notice .= 'وضعیت پرداخت شما دریافت نشد.';
-                    $notice .= '<br/>';
-                    $notice .= 'لطفا مجددا تلاش نمایید یا در صورت بروز اشکال با مدیر سایت تماس بگیرید.';
-                    wc_add_notice($notice, 'error');
+                    if (!empty($result->error_code) && !empty($result->error_message)) {
+                        $note = '';
+                        $note .= sprintf('کد خطا: %s', $result->error_code);
+                        $note .= '<br/>';
+                        $note .= sprintf('متن خطا: %s', $result->error_message);
+                        $order->add_order_note($note);
+
+                        $notice = $result->error_message;
+                        wc_add_notice($notice, 'error');
+                    }
 
                     wp_redirect($woocommerce->cart->get_checkout_url());
                     exit;

@@ -3,7 +3,7 @@
  * Plugin Name: WooCommerce IDPay Gateway
  * Author: IDPay
  * Description: درگاه پرداخت امن <a href="https://idpay.ir">آیدی پی</a> برای فروشگاه ساز ووکامرس
- * Version: 1.0
+ * Version: 1.2
  * Author URI: https://idpay.ir
  * Author Email: info@idpay.ir
  */

@@ -6,7 +6,6 @@
  * Version: 1.3
  * Author URI: https://idpay.ir
  * Author Email: info@idpay.ir
- * info@idpay.ir
  */
 
 if ( ! defined( 'ABSPATH' ) ) {

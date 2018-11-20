@@ -1,7 +1,44 @@
 <?php
 
+/**
+ * WC_IDPay Class.
+ */
 class WC_IDPay extends WC_Payment_Gateway {
 
+	/**
+	 * The API Key
+	 *
+	 * @var string
+	 */
+	protected $api_key;
+
+	/**
+	 * The sandbox mode.
+	 *
+	 * Indicates weather the gateway is in the test or the live mode.
+	 *
+	 * @var string
+	 */
+	protected $sandbox;
+
+	/**
+	 * The payment success message.
+	 *
+	 * @var string
+	 */
+	protected $success_massage;
+
+	/**
+	 * The payment failure message.
+	 *
+	 * @var string
+	 */
+	protected $failed_massage;
+
+
+	/**
+	 * Constructor for the gateway.
+	 */
 	public function __construct() {
 		$this->id                 = 'WC_IDPay';
 		$this->method_title       = 'درگاه پرداخت آیدی پی';

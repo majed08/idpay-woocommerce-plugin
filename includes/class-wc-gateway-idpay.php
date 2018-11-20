@@ -152,18 +152,6 @@ class WC_IDPay extends WC_Payment_Gateway {
 		$currency = $order->get_order_currency();
 		$currency = apply_filters( 'WC_IDPay_Currency', $currency, $order_id );
 
-		$form = "";
-		$form .= "<form id='idpay-checkout-form' class='woocommerce-checkout' method='POST' action=''>";
-		$form .= "<input id='idpay-checkout-form-submit' type='submit' class='button' value='پرداخت' />";
-		$form .= "<a class='button cancel' href='{$woocommerce->cart->get_checkout_url()}'>بازگشت</a>";
-		$form .= "</form>";
-		$form = apply_filters( 'WC_IDPay_Form', $form, $order_id, $woocommerce );
-
-		do_action( 'WC_IDPay_Gateway_Before_Form', $order_id, $woocommerce );
-		echo $form;
-		do_action( 'WC_IDPay_Gateway_After_Form', $order_id, $woocommerce );
-
-
 		$api_key = $this->api_key;
 		$sandbox = $this->sandbox == 'no' ? 'false' : 'true';
 

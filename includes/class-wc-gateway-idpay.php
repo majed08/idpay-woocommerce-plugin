@@ -62,19 +62,6 @@ class WC_IDPay extends WC_Payment_Gateway {
 		$this->success_massage = $this->get_option( 'success_massage' );
 		$this->failed_massage  = $this->get_option( 'failed_massage' );
 
-		// Hooks.
-		if ( version_compare( WOOCOMMERCE_VERSION, '2.0.0', '>=' ) ) {
-			add_action( 'woocommerce_update_options_payment_gateways_' . $this->id, array(
-				$this,
-				'process_admin_options',
-			) );
-		} else {
-			add_action( 'woocommerce_update_options_payment_gateways', array(
-				$this,
-				'process_admin_options',
-			) );
-		}
-
 		add_action( 'woocommerce_receipt_' . $this->id, array(
 			$this,
 			'idpay_checkout_receipt_page',

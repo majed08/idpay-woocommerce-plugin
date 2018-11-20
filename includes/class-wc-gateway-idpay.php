@@ -143,7 +143,7 @@ class WC_IDPay extends WC_Payment_Gateway {
 		$api_key = $this->api_key;
 		$sandbox = $this->sandbox == 'no' ? 'false' : 'true';
 
-		$amount   = idpay_wc_get_amount( intval( $order->order_total ), $currency );
+		$amount   = wc_idpay_get_amount( intval( $order->order_total ), $currency );
 		$desc     = 'سفارش شماره #' . $order->get_order_number();
 		$callback = add_query_arg( 'wc_order', $order_id, WC()->api_request_url( 'wc_idpay' ) );
 
@@ -314,7 +314,7 @@ class WC_IDPay extends WC_Payment_Gateway {
 
 		$currency = $order->get_order_currency();
 		$currency = apply_filters( 'WC_IDPay_Currency', $currency, $order_id );
-		$amount   = idpay_wc_get_amount( intval( $order->order_total ), $currency );
+		$amount   = wc_idpay_get_amount( intval( $order->order_total ), $currency );
 
 		if ( empty( $inquiry_status ) || empty( $inquiry_track_id ) || empty( $inquiry_amount ) || $inquiry_amount != $amount ) {
 			$note = 'خطا در وضعیت تراکنش یا مغایرت با اطلاعات درگاه پرداخت';

@@ -88,6 +88,15 @@ class WC_IDPay extends WC_Payment_Gateway {
 		parent::admin_options();
 	}
 
+	/**
+	 * Processes and saves the gateway options in the admin page.
+	 *
+	 * @return bool|void
+	 */
+	public function process_admin_options() {
+		parent::process_admin_options();
+	}
+
 	public function init_form_fields() {
 		$this->form_fields = apply_filters( 'WC_IDPay_Config', array(
 			'enabled'           => array(

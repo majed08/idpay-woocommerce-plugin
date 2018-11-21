@@ -12,4 +12,5 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+require_once( 'includes/wc-geteway-idpay-helpers.php' );
 require_once( 'includes/wc-gateway-idpay-init.php' );

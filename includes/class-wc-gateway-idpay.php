@@ -84,6 +84,9 @@ class WC_IDPay extends WC_Payment_Gateway {
 		) );
 	}
 
+	/**
+	 * Admin options for the gateway.
+	 */
 	public function admin_options() {
 		parent::admin_options();
 	}
@@ -97,7 +100,11 @@ class WC_IDPay extends WC_Payment_Gateway {
 		parent::process_admin_options();
 	}
 
+	/**
+	 * Initiate some form fields for the gateway settings.
+	 */
 	public function init_form_fields() {
+		// Populates the inherited property $form_fields.
 		$this->form_fields = apply_filters( 'WC_IDPay_Config', array(
 			'enabled'           => array(
 				'title'       => 'فعال/غیرفعال',
@@ -154,6 +161,15 @@ class WC_IDPay extends WC_Payment_Gateway {
 		) );
 	}
 
+	/**
+	 * Process the payment and return the result.
+	 *
+	 * see process_order_payment() in the Woocommerce APIs
+	 *
+	 * @param int $order_id
+	 *
+	 * @return array
+	 */
 	public function process_payment( $order_id ) {
 		$order = new WC_Order( $order_id );
 
@@ -378,6 +394,11 @@ class WC_IDPay extends WC_Payment_Gateway {
 		}
 	}
 
+	/**
+	 * Shows an invalid order message.
+	 *
+	 * @see idpay_checkout_return_handler().
+	 */
 	private function idpay_display_invalid_order_message() {
 		$notice = '';
 		$notice .= 'شماره سفارش ارجاع شده به آن وجود ندارد.';
@@ -386,6 +407,15 @@ class WC_IDPay extends WC_Payment_Gateway {
 		wc_add_notice( $notice, 'error' );
 	}
 
+	/**
+	 * Shows a success message
+	 *
+	 * This message is configured at the admin page of the gateway.
+	 *
+	 * @see idpay_checkout_return_handler()
+	 *
+	 * @param $order_id
+	 */
 	private function idpay_display_success_message( $order_id ) {
 		$track_id = get_post_meta( $order_id, 'idpay_track_id', TRUE );
 
@@ -395,6 +425,15 @@ class WC_IDPay extends WC_Payment_Gateway {
 		wc_add_notice( $notice, 'success' );
 	}
 
+	/**
+	 * Shows a failure message for the unsuccessful payments.
+	 *
+	 * This message is configured at the admin page of the gateway.
+	 *
+	 * @see idpay_checkout_return_handler()
+	 *
+	 * @param $order_id
+	 */
 	private function idpay_display_failed_message( $order_id ) {
 		$track_id = get_post_meta( $order_id, 'idpay_track_id', TRUE );
 

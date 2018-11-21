@@ -357,7 +357,7 @@ class WC_IDPay extends WC_Payment_Gateway {
 		}
 	}
 
-	function idpay_display_invalid_order_message() {
+	private function idpay_display_invalid_order_message() {
 		$notice = '';
 		$notice .= 'شماره سفارش ارجاع شده به آن وجود ندارد.';
 		$notice .= '<br/>';
@@ -365,7 +365,7 @@ class WC_IDPay extends WC_Payment_Gateway {
 		wc_add_notice( $notice, 'error' );
 	}
 
-	function idpay_display_success_message( $order_id ) {
+	private function idpay_display_success_message( $order_id ) {
 		$track_id = get_post_meta( $order_id, 'idpay_track_id', TRUE );
 
 		$notice = wpautop( wptexturize( $this->success_massage ) );
@@ -374,7 +374,7 @@ class WC_IDPay extends WC_Payment_Gateway {
 		wc_add_notice( $notice, 'success' );
 	}
 
-	function idpay_display_failed_message( $order_id ) {
+	private function idpay_display_failed_message( $order_id ) {
 		$track_id = get_post_meta( $order_id, 'idpay_track_id', TRUE );
 
 		$notice = wpautop( wptexturize( $this->failed_massage ) );

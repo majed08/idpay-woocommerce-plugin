@@ -23,6 +23,12 @@ License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
 == Changelog ==
 
+= 1.3, November 21, 2018 =
+* [کدینگ استاندارد](https://codex.wordpress.org/WordPress_Coding_Standards)
+* تغییر ساختار فایل ها
+* افزودن مستندات پی.اچ.پی
+* استفاده از use wp_safe_remote_post() به جای curl
+
 = 1.2, November 10, 2018 =
 * ذخیره و نمایش جزییات خطای رخ داده
 

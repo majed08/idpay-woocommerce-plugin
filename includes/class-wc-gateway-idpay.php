@@ -174,19 +174,22 @@ class WC_IDPay extends WC_Payment_Gateway {
 			'callback' => $callback,
 		);
 
-		$ch = curl_init( 'https://api.idpay.ir/v1/payment' );
-		curl_setopt( $ch, CURLOPT_POSTFIELDS, json_encode( $data ) );
-		curl_setopt( $ch, CURLOPT_RETURNTRANSFER, TRUE );
-		curl_setopt( $ch, CURLOPT_HTTPHEADER, array(
-			'Content-Type: application/json',
-			'X-API-KEY:' . $api_key,
-			'X-SANDBOX:' . $sandbox,
-		) );
+		$headers = array(
+			'Content-Type' => 'application/json',
+			'X-API-KEY'    => $api_key,
+			'X-SANDBOX'    => $sandbox,
+		);
 
-		$result      = curl_exec( $ch );
+		$args = array(
+			'body'    => json_encode( $data ),
+			'headers' => $headers,
+		);
+
+
+		$response    = wp_safe_remote_post( 'https://api.idpay.ir/v1/payment', $args );
+		$http_status = wp_remote_retrieve_response_code( $response );
+		$result      = wp_remote_retrieve_body( $response );
 		$result      = json_decode( $result );
-		$http_status = curl_getinfo( $ch, CURLINFO_HTTP_CODE );
-		curl_close( $ch );
 
 		if ( $http_status != 201 || empty( $result ) || empty( $result->id ) || empty( $result->link ) ) {
 			$note = '';
@@ -265,20 +268,21 @@ class WC_IDPay extends WC_Payment_Gateway {
 			'order_id' => $order_id,
 		);
 
-		$ch = curl_init();
-		curl_setopt( $ch, CURLOPT_URL, 'https://api.idpay.ir/v1/payment/inquiry' );
-		curl_setopt( $ch, CURLOPT_POSTFIELDS, json_encode( $data ) );
-		curl_setopt( $ch, CURLOPT_RETURNTRANSFER, TRUE );
-		curl_setopt( $ch, CURLOPT_HTTPHEADER, array(
-			'Content-Type: application/json',
-			'X-API-KEY:' . $api_key,
-			'X-SANDBOX:' . $sandbox,
-		) );
+		$headers = array(
+			'Content-Type' => 'application/json',
+			'X-API-KEY'    => $api_key,
+			'X-SANDBOX'    => $sandbox,
+		);
 
-		$result      = curl_exec( $ch );
+		$args = array(
+			'body'    => json_encode( $data ),
+			'headers' => $headers,
+		);
+
+		$response    = wp_safe_remote_post( 'https://api.idpay.ir/v1/payment/inquiry', $args );
+		$http_status = wp_remote_retrieve_response_code( $response );
+		$result      = wp_remote_retrieve_body( $response );
 		$result      = json_decode( $result );
-		$http_status = curl_getinfo( $ch, CURLINFO_HTTP_CODE );
-		curl_close( $ch );
 
 		if ( $http_status != 200 ) {
 			$note = '';

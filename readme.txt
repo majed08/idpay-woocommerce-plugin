@@ -1,5 +1,5 @@
 === IDPay Payment Gateway for Woocommerce ===
-Contributors: majidlotfinia, jazaali
+Contributors: majidlotfinia, jazaali, imikiani
 Tags: woocommerce, payment, idpay, gateway
 Stable tag: trunk
 License: GPLv2 or later

@@ -15,7 +15,7 @@ IDPay provides some payment services and this plugin enables the IDPay's payment
 
 == Installation ==
 
-After creating a web service on https://idpay.ir and getting an API Key, follow the following instruction:
+After creating a web service on https://idpay.ir and getting an API Key, follow this instruction:
 
 1. Activate plugin IDPay for Woocommerce.
 2. Go tho WooCommerce > Settings > Payments.
@@ -23,7 +23,7 @@ After creating a web service on https://idpay.ir and getting an API Key, follow 
 4. Go to Manage.
 5. Enter the API Key.
 
-If you need to use this plugin in Test mode, check the "Sandbox". in the
+If you need to use this plugin in Test mode, check the "Sandbox".
 
 == Changelog ==
 

@@ -1,11 +1,12 @@
 <?php
 /**
- * Plugin Name: WooCommerce IDPay Gateway
+ * Plugin Name: IDPay payment gateway for Woocommerce
  * Author: IDPay
- * Description: درگاه پرداخت امن <a href="https://idpay.ir">آیدی پی</a> برای فروشگاه ساز ووکامرس
+ * Description: Secure <a href="https://idpay.ir">IDPay</a> payment gateway for Woocommerce.
  * Version: 1.3
  * Author URI: https://idpay.ir
  * Author Email: info@idpay.ir
+ * Text Domain: idpay-for-woocommerce
  */
 
 if ( ! defined( 'ABSPATH' ) ) {

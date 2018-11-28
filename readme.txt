@@ -27,16 +27,17 @@ If you need to use this plugin in Test mode, check the "Sandbox". in the
 
 == Changelog ==
 
-= 1.3, November 21, 2018 =
+= 1.0.3, November 21, 2018 =
 * [Coding Standards](https://codex.wordpress.org/WordPress_Coding_Standards).
 * Change files structure.
 * PHP documentations.
 * Use wp_safe_remote_post() instead of curl.
+* Translation of strings.
 
-= 1.2, November 10, 2018 =
+= 1.0.2, November 10, 2018 =
 * Save and show errors which might be occurred during the payment process.
 
-= 1.1, November 10, 2018 =
+= 1.0.1, November 10, 2018 =
 * Save card number when saving the payment details.
 
 = 1.0, October 15, 2018 =

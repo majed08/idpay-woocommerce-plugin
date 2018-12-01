@@ -6,7 +6,7 @@
  * Version: 1.0.3
  * Author URI: https://idpay.ir
  * Author Email: info@idpay.ir
- * Text Domain: idpay-for-woocommerce
+ * Text Domain: woo-idpay-gateway
  */
 
 if ( ! defined( 'ABSPATH' ) ) {

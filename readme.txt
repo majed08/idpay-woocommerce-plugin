@@ -27,6 +27,10 @@ If you need to use this plugin in Test mode, check the "Sandbox".
 
 == Changelog ==
 
+= 1.0.4, December 01, 2018 =
+* Change text domain.
+* Add asset images.
+
 = 1.0.3, November 21, 2018 =
 * [Coding Standards](https://codex.wordpress.org/WordPress_Coding_Standards).
 * Change files structure.

@@ -5,7 +5,7 @@ msgstr ""
 "Project-Id-Version: IDPay payment gateway for Woocommerce 1.0.4\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/woo-idpay-"
 "gateway\n"
-"POT-Creation-Date: 2018-12-01 12:58:04+00:00\n"
+"POT-Creation-Date: 2018-12-08 17:10:48+00:00\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -175,6 +175,22 @@ msgstr ""
 #: includes/class-wc-gateway-idpay.php:408
 msgid ""
 "Please try again or contact the site administrator in case of a problem."
+msgstr ""
+
+#: includes/wc-gateway-idpay-init.php:51
+msgid "Iranian hezar rial"
+msgstr ""
+
+#: includes/wc-gateway-idpay-init.php:52
+msgid "Iranian hezar toman"
+msgstr ""
+
+#: includes/wc-gateway-idpay-init.php:64
+msgid "IRHR"
+msgstr ""
+
+#: includes/wc-gateway-idpay-init.php:68
+msgid "IRHT"
 msgstr ""
 
 #. Plugin Name of the plugin/theme

@@ -1,7 +1,7 @@
 === IDPay Payment Gateway for Woocommerce ===
 Contributors: majidlotfinia, jazaali, imikiani
 Tags: woocommerce, payment, idpay, gateway
-Stable tag: 1.0.5
+Stable tag: 1.0.6
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -26,6 +26,10 @@ After creating a web service on https://idpay.ir and getting an API Key, follow 
 If you need to use this plugin in Test mode, check the "Sandbox".
 
 == Changelog ==
+
+= 1.0.6, December 09, 2018 =
+* Change order status to 'processing' after a successful payment.
+* Add 'Domain Path' to the plugin descriptions.
 
 = 1.0.5, December 08, 2018 =
 * Solve problem with strings' translations.

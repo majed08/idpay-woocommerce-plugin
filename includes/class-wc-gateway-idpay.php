@@ -116,13 +116,13 @@ class WC_IDPay extends WC_Payment_Gateway {
 			'title'             => array(
 				'title'       => __( 'Title', 'woo-idpay-gateway' ),
 				'type'        => 'text',
-				'description' => __('This gateway title will be shown when a customer is going to to checkout.', 'woo-idpay-gateway'),
+				'description' => __( 'This gateway title will be shown when a customer is going to to checkout.', 'woo-idpay-gateway' ),
 				'default'     => __( 'IDPay payment gateway', 'woo-idpay-gateway' ),
 			),
 			'description'       => array(
 				'title'       => __( 'Description', 'woo-idpay-gateway' ),
 				'type'        => 'textarea',
-				'description' => __('This gateway description will be shown when a customer is going to to checkout.', 'woo-idpay-gateway'),
+				'description' => __( 'This gateway description will be shown when a customer is going to to checkout.', 'woo-idpay-gateway' ),
 				'default'     => __( 'Redirects customers to IDPay to process their payments.', 'woo-idpay-gateway' ),
 			),
 			'webservice_config' => array(
@@ -293,7 +293,7 @@ class WC_IDPay extends WC_Payment_Gateway {
 			exit;
 		}
 
-		if ( $order->status == 'completed' ) {
+		if ( $order->status == 'completed' || $order->status == 'processing' ) {
 			$this->idpay_display_success_message( $order_id );
 			wp_redirect( add_query_arg( 'wc_status', 'success', $this->get_return_url( $order ) ) );
 			exit;
@@ -353,7 +353,7 @@ class WC_IDPay extends WC_Payment_Gateway {
 		$inquiry_card_no  = empty( $result->card_no ) ? NULL : $result->card_no;
 		$inquiry_date     = empty( $result->date ) ? NULL : $result->date;
 
-		$status = ( $inquiry_status == 100 ) ? 'completed' : 'failed';
+		$status = ( $inquiry_status == 100 ) ? 'processing' : 'failed';
 
 		$note = sprintf( __( 'IDPay tracking id: %s', 'woo-idpay-gateway' ), $inquiry_track_id );
 		$order->add_order_note( $note );
@@ -383,9 +383,7 @@ class WC_IDPay extends WC_Payment_Gateway {
 
 			wp_redirect( $woocommerce->cart->get_checkout_url() );
 			exit;
-		}
-
-		if ( $status == 'completed' ) {
+		} elseif ( $status == 'processing' ) {
 			$order->payment_complete( $inquiry_id );
 			$order->update_status( $status );
 			$woocommerce->cart->empty_cart();

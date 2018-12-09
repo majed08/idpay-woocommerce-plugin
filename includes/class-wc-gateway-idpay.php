@@ -293,7 +293,7 @@ class WC_IDPay extends WC_Payment_Gateway {
 			exit;
 		}
 
-		if ( $order->status == 'completed' || $order->status == 'processing' ) {
+		if ( $order->status == 'completed' ) {
 			$this->idpay_display_success_message( $order_id );
 			wp_redirect( add_query_arg( 'wc_status', 'success', $this->get_return_url( $order ) ) );
 			exit;
@@ -353,7 +353,7 @@ class WC_IDPay extends WC_Payment_Gateway {
 		$inquiry_card_no  = empty( $result->card_no ) ? NULL : $result->card_no;
 		$inquiry_date     = empty( $result->date ) ? NULL : $result->date;
 
-		$status = ( $inquiry_status == 100 ) ? 'processing' : 'failed';
+		$status = ( $inquiry_status == 100 ) ? 'completed' : 'failed';
 
 		$note = sprintf( __( 'IDPay tracking id: %s', 'woo-idpay-gateway' ), $inquiry_track_id );
 		$order->add_order_note( $note );
@@ -385,7 +385,7 @@ class WC_IDPay extends WC_Payment_Gateway {
 			exit;
 		}
 
-		elseif ( $status == 'processing' ) {
+		if ( $status == 'completed' ) {
 			$order->payment_complete( $inquiry_id );
 			$order->update_status( $status );
 			$woocommerce->cart->empty_cart();

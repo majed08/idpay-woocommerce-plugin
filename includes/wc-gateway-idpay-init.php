@@ -1,4 +1,9 @@
 <?php
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 /**
  * Add a function as a callback when hook 'plugins_loaded' is fired.
  *
@@ -43,10 +48,8 @@ function wc_gateway_idpay_init() {
 		add_filter( 'woocommerce_currencies', 'wc_idpay_currencies' );
 
 		function wc_idpay_currencies( $currencies ) {
-			$currencies['IRR']  = __( 'ریال', 'woocommerce' );
-			$currencies['IRT']  = __( 'تومان', 'woocommerce' );
-			$currencies['IRHR'] = __( 'هزار ریال', 'woocommerce' );
-			$currencies['IRHT'] = __( 'هزار تومان', 'woocommerce' );
+			$currencies['IRHR'] = __( 'Iranian hezar rial', 'woo-idpay-gateway' );
+			$currencies['IRHT'] = __( 'Iranian hezar toman', 'woo-idpay-gateway' );
 
 			return $currencies;
 		}
@@ -56,20 +59,13 @@ function wc_gateway_idpay_init() {
 
 		function wc_idpay_currency_symbol( $currency_symbol, $currency ) {
 			switch ( $currency ) {
-				case 'IRR':
-					$currency_symbol = 'ریال';
-					break;
-
-				case 'IRT':
-					$currency_symbol = 'تومان';
-					break;
 
 				case 'IRHR':
-					$currency_symbol = 'هزار ریال';
+					$currency_symbol = __( 'IRHR', 'woo-idpay-gateway' );
 					break;
 
 				case 'IRHT':
-					$currency_symbol = 'هزار تومان';
+					$currency_symbol = __( 'IRHT', 'woo-idpay-gateway' );
 					break;
 			}
 

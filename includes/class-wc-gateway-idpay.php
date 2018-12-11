@@ -41,8 +41,8 @@ class WC_IDPay extends WC_Payment_Gateway {
 	 */
 	public function __construct() {
 		$this->id                 = 'WC_IDPay';
-		$this->method_title       = 'درگاه پرداخت آیدی پی';
-		$this->method_description = 'پرداخت توسط درگاه پرداخت آیدی پی';
+		$this->method_title       = __( 'IDPay', 'woo-idpay-gateway' );
+		$this->method_description = __( 'Redirects customers to IDPay to process their payments.', 'woo-idpay-gateway' );
 		$this->has_fields         = FALSE;
 		$this->icon               = apply_filters( 'WC_IDPay_logo', dirname( WP_PLUGIN_URL . '/' . plugin_basename( dirname( __FILE__ ) ) ) . '/assets/images/logo.png' );
 
@@ -107,56 +107,58 @@ class WC_IDPay extends WC_Payment_Gateway {
 		// Populates the inherited property $form_fields.
 		$this->form_fields = apply_filters( 'WC_IDPay_Config', array(
 			'enabled'           => array(
-				'title'       => 'فعال/غیرفعال',
+				'title'       => __( 'Enable/Disable', 'woo-idpay-gateway' ),
 				'type'        => 'checkbox',
-				'label'       => 'فعال سازی درگاه پرداخت آیدی پی',
+				'label'       => 'Enable IDPay gateway',
 				'description' => '',
 				'default'     => 'yes',
 			),
 			'title'             => array(
-				'title'       => 'عنوان',
+				'title'       => __( 'Title', 'woo-idpay-gateway' ),
 				'type'        => 'text',
-				'description' => '',
-				'default'     => 'درگاه پرداخت آیدی پی',
+				'description' => __( 'This gateway title will be shown when a customer is going to to checkout.', 'woo-idpay-gateway' ),
+				'default'     => __( 'IDPay payment gateway', 'woo-idpay-gateway' ),
 			),
 			'description'       => array(
-				'title'       => 'توضیحات',
+				'title'       => __( 'Description', 'woo-idpay-gateway' ),
 				'type'        => 'textarea',
-				'description' => '',
-				'default'     => 'پرداخت توسط درگاه پرداخت آیدی پی',
+				'description' => __( 'This gateway description will be shown when a customer is going to to checkout.', 'woo-idpay-gateway' ),
+				'default'     => __( 'Redirects customers to IDPay to process their payments.', 'woo-idpay-gateway' ),
 			),
 			'webservice_config' => array(
-				'title'       => 'تنظیمات وب سرویس',
+				'title'       => __( 'Webservice Configuration', 'woo-idpay-gateway' ),
 				'type'        => 'title',
 				'description' => '',
 			),
 			'api_key'           => array(
-				'title'       => 'API Key',
+				'title'       => __( 'API Key', 'woo-idpay-gateway' ),
 				'type'        => 'text',
-				'description' => '',
+				'description' => __( 'You can create an API Key by going to https://idpay.ir/dashboard/web-services', 'woo-idpay-gateway' ),
 				'default'     => '',
 			),
 			'sandbox'           => array(
-				'title'   => 'آزمایشگاه',
-				'type'    => 'checkbox',
-				'default' => 'no',
+				'title'       => __( 'Sandbox', 'woo-idpay-gateway' ),
+				'label'       => __( 'Enable sandbox mode', 'woo-idpay-gateway' ),
+				'description' => __( 'If you check this option, the gateway works in test (sandbox) mode.', 'woo-idpay-gateway' ),
+				'type'        => 'checkbox',
+				'default'     => 'no',
 			),
 			'message_confing'   => array(
-				'title'       => 'تنظیمات پیام ها',
+				'title'       => __( 'Payment message configuration', 'woo-idpay-gateway' ),
 				'type'        => 'title',
-				'description' => '',
+				'description' => __( 'Configure the messages which are displayed when a customer is brought back to the site from the gateway.', 'woo-idpay-gateway' ),
 			),
 			'success_massage'   => array(
-				'title'       => 'پیام پرداخت موفق',
+				'title'       => __( 'Success message', 'woo-idpay-gateway' ),
 				'type'        => 'textarea',
-				'description' => 'متن پیامی که می خواهید بعد از پرداخت موفق به کاربر نمایش دهید را وارد کنید. همچنین می توانید از شورت کدهای {order_id} برای نمایش شماره سفارش و {track_id} برای نمایش کد رهگیری آیدی پی استفاده نمایید.',
-				'default'     => 'پرداخت شما با موفقیت انجام شد. کد رهگیری: {track_id}',
+				'description' => __( 'Enter the message you want to display to the customer after a successful payment. You can also choose these placeholders {track_id}, {order_id} for showing the order id and the tracking id respectively.', 'woo-idpay-gateway' ),
+				'default'     => __( 'Your payment has been successfully completed. Track id: {track_id}', 'woo-idpay-gateway' ),
 			),
 			'failed_massage'    => array(
-				'title'       => 'پیام پرداخت ناموفق',
+				'title'       => __( 'Failure message', 'woo-idpay-gateway' ),
 				'type'        => 'textarea',
-				'description' => 'متن پیامی که می خواهید بعد از پرداخت ناموفق به کاربر نمایش دهید را وارد کنید. همچنین می توانید از شورت کدهای {order_id} برای نمایش شماره سفارش و {track_id} برای نمایش کد رهگیری آیدی پی استفاده نمایید.',
-				'default'     => 'پرداخت شما ناموفق بوده است. لطفا مجددا تلاش نمایید یا در صورت بروز اشکال با مدیر سایت تماس بگیرید.',
+				'description' => __( 'Enter the message you want to display to the customer after a failure occurred in a payment. You can also choose these placeholders {track_id}, {order_id} for showing the order id and the tracking id respectively.', 'woo-idpay-gateway' ),
+				'default'     => __( 'Your payment has failed. Please try again or contact the site administrator in case of a problem.', 'woo-idpay-gateway' ),
 			),
 		) );
 	}
@@ -193,11 +195,11 @@ class WC_IDPay extends WC_Payment_Gateway {
 		$sandbox = $this->sandbox == 'no' ? 'false' : 'true';
 
 		$amount   = wc_idpay_get_amount( intval( $order->order_total ), $currency );
-		$desc     = 'سفارش شماره #' . $order->get_order_number();
+		$desc     = __( 'Oder number #', 'woo-idpay-gateway' ) . $order->get_order_number();
 		$callback = add_query_arg( 'wc_order', $order_id, WC()->api_request_url( 'wc_idpay' ) );
 
 		if ( empty( $amount ) ) {
-			$notice = 'واحد پول انتخاب شده پشتیبانی نمی شود.';
+			$notice = __( 'selected currency is not supported', 'woo-idpay-gateway' );
 			wc_add_notice( $notice, 'error' );
 
 			return FALSE;
@@ -230,16 +232,16 @@ class WC_IDPay extends WC_Payment_Gateway {
 
 		if ( $http_status != 201 || empty( $result ) || empty( $result->id ) || empty( $result->link ) ) {
 			$note = '';
-			$note .= 'هنگام ایجاد تراکنش خطا رخ داده است.';
+			$note .= __( 'An error occurred while creating the transaction.', 'woo-idpay-gateway' );
 			$note .= '<br/>';
-			$note .= sprintf( 'وضعیت خطا: %s', $http_status );
+			$note .= sprintf( __( 'error status: %s', 'woo-idpay-gateway' ), $http_status );
 			$order->add_order_note( $note );
 
 			if ( ! empty( $result->error_code ) && ! empty( $result->error_message ) ) {
 				$note = '';
-				$note .= sprintf( 'کد خطا: %s', $result->error_code );
+				$note .= sprintf( __( 'error code: %s', 'woo-idpay-gateway' ), $result->error_code );
 				$note .= '<br/>';
-				$note .= sprintf( 'متن خطا: %s', $result->error_message );
+				$note .= sprintf( __( 'error message: %s', 'woo-idpay-gateway' ), $result->error_message );
 				$order->add_order_note( $note );
 
 				$notice = $result->error_message;
@@ -252,7 +254,7 @@ class WC_IDPay extends WC_Payment_Gateway {
 		// Save ID of this transaction
 		update_post_meta( $order_id, '_transaction_id', $result->id );
 
-		$note = sprintf( 'کد تراکنش: %s', $result->id );
+		$note = sprintf( __( 'transaction id: %s', 'woo-idpay-gateway' ), $result->id );
 		$order->add_order_note( $note );
 		update_post_meta( $order_id, 'idpay_id', $result->id );
 
@@ -291,7 +293,7 @@ class WC_IDPay extends WC_Payment_Gateway {
 			exit;
 		}
 
-		if ( $order->status == 'completed' ) {
+		if ( $order->status == 'completed' || $order->status == 'processing' ) {
 			$this->idpay_display_success_message( $order_id );
 			wp_redirect( add_query_arg( 'wc_status', 'success', $this->get_return_url( $order ) ) );
 			exit;
@@ -323,16 +325,16 @@ class WC_IDPay extends WC_Payment_Gateway {
 
 		if ( $http_status != 200 ) {
 			$note = '';
-			$note .= 'هنگام بررسی وضعیت تراکنش خطا رخ داده است.';
+			$note .= __( 'An error occurred while verifying the transaction.', 'woo-idpay-gateway' );
 			$note .= '<br/>';
-			$note .= sprintf( 'وضعیت خطا: %s', $http_status );
+			$note .= sprintf( __( 'error status: %s', 'woo-idpay-gateway' ), $http_status );
 			$order->add_order_note( $note );
 
 			if ( ! empty( $result->error_code ) && ! empty( $result->error_message ) ) {
 				$note = '';
-				$note .= sprintf( 'کد خطا: %s', $result->error_code );
+				$note .= sprintf( __( 'error code: %s', 'woo-idpay-gateway' ), $result->error_code );
 				$note .= '<br/>';
-				$note .= sprintf( 'متن خطا: %s', $result->error_message );
+				$note .= sprintf( __( 'error message: %s', 'woo-idpay-gateway' ), $result->error_message );
 				$order->add_order_note( $note );
 
 				$notice = $result->error_message;
@@ -351,17 +353,17 @@ class WC_IDPay extends WC_Payment_Gateway {
 		$inquiry_card_no  = empty( $result->card_no ) ? NULL : $result->card_no;
 		$inquiry_date     = empty( $result->date ) ? NULL : $result->date;
 
-		$status = ( $inquiry_status == 100 ) ? 'completed' : 'failed';
+		$status = ( $inquiry_status == 100 ) ? 'processing' : 'failed';
 
-		$note = sprintf( 'کد رهگیری آیدی پی: %s', $inquiry_track_id );
+		$note = sprintf( __( 'IDPay tracking id: %s', 'woo-idpay-gateway' ), $inquiry_track_id );
 		$order->add_order_note( $note );
 		update_post_meta( $order_id, 'idpay_track_id', $inquiry_track_id );
 
-		$note = sprintf( 'وضعیت پرداخت تراکنش: %s', $inquiry_status );
+		$note = sprintf( __( 'Transaction payment status: %s', 'woo-idpay-gateway' ), $inquiry_status );
 		$order->add_order_note( $note );
 		update_post_meta( $order_id, 'idpay_status', $inquiry_status );
 
-		$note = sprintf( 'شماره کارت پرداخت کننده: %s', $inquiry_card_no );
+		$note = sprintf( __( 'Payer card number: %s', 'woo-idpay-gateway' ), $inquiry_card_no );
 		$order->add_order_note( $note );
 		update_post_meta( $order_id, 'idpay_card_no', $inquiry_card_no );
 
@@ -370,7 +372,7 @@ class WC_IDPay extends WC_Payment_Gateway {
 		$amount   = wc_idpay_get_amount( intval( $order->order_total ), $currency );
 
 		if ( empty( $inquiry_status ) || empty( $inquiry_track_id ) || empty( $inquiry_amount ) || $inquiry_amount != $amount ) {
-			$note = 'خطا در وضعیت تراکنش یا مغایرت با اطلاعات درگاه پرداخت';
+			$note = __( 'Error in transaction status or inconsistency with payment gateway information', 'woo-idpay-gateway' );
 			$order->add_order_note( $note );
 			$status = 'failed';
 		}
@@ -381,9 +383,7 @@ class WC_IDPay extends WC_Payment_Gateway {
 
 			wp_redirect( $woocommerce->cart->get_checkout_url() );
 			exit;
-		}
-
-		if ( $status == 'completed' ) {
+		} elseif ( $status == 'processing' ) {
 			$order->payment_complete( $inquiry_id );
 			$order->update_status( $status );
 			$woocommerce->cart->empty_cart();
@@ -401,9 +401,9 @@ class WC_IDPay extends WC_Payment_Gateway {
 	 */
 	private function idpay_display_invalid_order_message() {
 		$notice = '';
-		$notice .= 'شماره سفارش ارجاع شده به آن وجود ندارد.';
+		$notice .= __( 'There is no order number referenced.', 'woo-idpay-gateway' );
 		$notice .= '<br/>';
-		$notice .= 'لطفا مجددا تلاش نمایید یا در صورت بروز اشکال با مدیر سایت تماس بگیرید.';
+		$notice .= __( 'Please try again or contact the site administrator in case of a problem.', 'woo-idpay-gateway' );
 		wc_add_notice( $notice, 'error' );
 	}
 

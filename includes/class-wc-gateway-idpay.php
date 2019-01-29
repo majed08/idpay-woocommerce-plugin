@@ -59,6 +59,9 @@ class WC_IDPay extends WC_Payment_Gateway {
 		$this->api_key = $this->get_option( 'api_key' );
 		$this->sandbox = $this->get_option( 'sandbox' );
 
+		$this->payment_endpoint = $this->get_option( 'payment_endpoint' );
+		$this->verify_endpoint = $this->get_option( 'verify_endpoint' );
+
 		$this->success_massage = $this->get_option( 'success_massage' );
 		$this->failed_massage  = $this->get_option( 'failed_massage' );
 
@@ -143,6 +146,18 @@ class WC_IDPay extends WC_Payment_Gateway {
 				'type'        => 'checkbox',
 				'default'     => 'no',
 			),
+			'payment_endpoint'           => array(
+				'title'       => __( 'Payment endpoint', 'woo-idpay-gateway' ),
+				'type'        => 'text',
+				'description' => __( '', 'woo-idpay-gateway' ),
+				'default'     => 'https://test.idpay.ir/v1.1/payment',
+			),
+			'verify_endpoint'           => array(
+				'title'       => __( 'Verify endpoint', 'woo-idpay-gateway' ),
+				'type'        => 'text',
+				'description' => __( '', 'woo-idpay-gateway' ),
+				'default'     => 'https://test.idpay.ir/v1.1/payment/verify',
+			),
 			'message_confing'   => array(
 				'title'       => __( 'Payment message configuration', 'woo-idpay-gateway' ),
 				'type'        => 'title',
@@ -225,7 +240,7 @@ class WC_IDPay extends WC_Payment_Gateway {
 		);
 
 
-		$response    = wp_safe_remote_post( 'https://api.idpay.ir/v1/payment', $args );
+		$response    = wp_safe_remote_post( $this->payment_endpoint, $args );
 		$http_status = wp_remote_retrieve_response_code( $response );
 		$result      = wp_remote_retrieve_body( $response );
 		$result      = json_decode( $result );
@@ -318,7 +333,7 @@ class WC_IDPay extends WC_Payment_Gateway {
 			'headers' => $headers,
 		);
 
-		$response    = wp_safe_remote_post( 'https://api.idpay.ir/v1/payment/inquiry', $args );
+		$response    = wp_safe_remote_post( $this->verify_endpoint, $args );
 		$http_status = wp_remote_retrieve_response_code( $response );
 		$result      = wp_remote_retrieve_body( $response );
 		$result      = json_decode( $result );
@@ -353,7 +368,7 @@ class WC_IDPay extends WC_Payment_Gateway {
 		$inquiry_card_no  = empty( $result->card_no ) ? NULL : $result->card_no;
 		$inquiry_date     = empty( $result->date ) ? NULL : $result->date;
 
-		$status = ( $inquiry_status == 100 ) ? 'processing' : 'failed';
+		$status = ( $inquiry_status >= 100 ) ? 'processing' : 'failed';
 
 		$note = sprintf( __( 'IDPay tracking id: %s', 'woo-idpay-gateway' ), $inquiry_track_id );
 		$order->add_order_note( $note );

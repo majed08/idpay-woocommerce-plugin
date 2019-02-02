@@ -381,7 +381,7 @@ class WC_IDPay extends WC_Payment_Gateway {
 			$order->add_order_note( $note );
 			update_post_meta( $order_id, 'idpay_card_no', $verify_card_no );
 
-			$currency = $order->get_order_currency();
+			$currency = $order->get_currency();
 			$currency = apply_filters( 'WC_IDPay_Currency', $currency, $order_id );
 			$amount   = wc_idpay_get_amount( intval( $order->order_total ), $currency );
 

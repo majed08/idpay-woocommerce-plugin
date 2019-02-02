@@ -314,8 +314,6 @@ class WC_IDPay extends WC_Payment_Gateway {
 			exit;
 		}
 
-		$order->add_order_note("order Status: " . $order->status);
-
 		$api_key = $this->api_key;
 		$sandbox = $this->sandbox == 'no' ? 'false' : 'true';
 

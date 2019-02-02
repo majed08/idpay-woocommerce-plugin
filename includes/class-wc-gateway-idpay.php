@@ -308,7 +308,7 @@ class WC_IDPay extends WC_Payment_Gateway {
 			exit;
 		}
 
-		if ( $order->status == 'completed' || $order->status == 'processing' ) {
+		if ( $order->get_status() == 'completed' || $order->get_status() == 'processing' ) {
 			$this->idpay_display_success_message( $order_id );
 			wp_redirect( add_query_arg( 'wc_status', 'success', $this->get_return_url( $order ) ) );
 			exit;

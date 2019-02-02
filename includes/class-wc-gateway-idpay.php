@@ -314,6 +314,8 @@ class WC_IDPay extends WC_Payment_Gateway {
 			exit;
 		}
 
+		$order->add_order_note("order Status: " . $order->status);
+
 		$api_key = $this->api_key;
 		$sandbox = $this->sandbox == 'no' ? 'false' : 'true';
 
@@ -359,33 +361,33 @@ class WC_IDPay extends WC_Payment_Gateway {
 			wp_redirect( $woocommerce->cart->get_checkout_url() );
 			exit;
 		} else {
-			$inquiry_status   = empty( $result->status ) ? NULL : $result->status;
-			$inquiry_track_id = empty( $result->track_id ) ? NULL : $result->track_id;
-			$inquiry_id       = empty( $result->id ) ? NULL : $result->id;
-			$inquiry_order_id = empty( $result->order_id ) ? NULL : $result->order_id;
-			$inquiry_amount   = empty( $result->amount ) ? NULL : $result->amount;
-			$inquiry_card_no  = empty( $result->card_no ) ? NULL : $result->card_no;
-			$inquiry_date     = empty( $result->date ) ? NULL : $result->date;
+			$verify_status   = empty( $result->status ) ? NULL : $result->status;
+			$verify_track_id = empty( $result->track_id ) ? NULL : $result->track_id;
+			$verify_id       = empty( $result->id ) ? NULL : $result->id;
+			$verify_order_id = empty( $result->order_id ) ? NULL : $result->order_id;
+			$verify_amount   = empty( $result->amount ) ? NULL : $result->amount;
+			$verify_card_no  = empty( $result->card_no ) ? NULL : $result->card_no;
+			$verify_date     = empty( $result->date ) ? NULL : $result->date;
 
-			$status = ( $inquiry_status >= 100 ) ? 'processing' : 'failed';
+			$status = ( $verify_status >= 100 ) ? 'processing' : 'failed';
 
-			$note = sprintf( __( 'IDPay tracking id: %s', 'woo-idpay-gateway' ), $inquiry_track_id );
+			$note = sprintf( __( 'IDPay tracking id: %s', 'woo-idpay-gateway' ), $verify_track_id );
 			$order->add_order_note( $note );
-			update_post_meta( $order_id, 'idpay_track_id', $inquiry_track_id );
+			update_post_meta( $order_id, 'idpay_track_id', $verify_track_id );
 
-			$note = sprintf( __( 'Transaction payment status: %s', 'woo-idpay-gateway' ), $inquiry_status );
+			$note = sprintf( __( 'Transaction payment status: %s', 'woo-idpay-gateway' ), $verify_status );
 			$order->add_order_note( $note );
-			update_post_meta( $order_id, 'idpay_status', $inquiry_status );
+			update_post_meta( $order_id, 'idpay_status', $verify_status );
 
-			$note = sprintf( __( 'Payer card number: %s', 'woo-idpay-gateway' ), $inquiry_card_no );
+			$note = sprintf( __( 'Payer card number: %s', 'woo-idpay-gateway' ), $verify_card_no );
 			$order->add_order_note( $note );
-			update_post_meta( $order_id, 'idpay_card_no', $inquiry_card_no );
+			update_post_meta( $order_id, 'idpay_card_no', $verify_card_no );
 
 			$currency = $order->get_order_currency();
 			$currency = apply_filters( 'WC_IDPay_Currency', $currency, $order_id );
 			$amount   = wc_idpay_get_amount( intval( $order->order_total ), $currency );
 
-			if ( empty( $inquiry_status ) || empty( $inquiry_track_id ) || empty( $inquiry_amount ) || $inquiry_amount != $amount ) {
+			if ( empty( $verify_status ) || empty( $verify_track_id ) || empty( $verify_amount ) || $verify_amount != $amount ) {
 				$note = __( 'Error in transaction status or inconsistency with payment gateway information', 'woo-idpay-gateway' );
 				$order->add_order_note( $note );
 				$status = 'failed';
@@ -398,7 +400,7 @@ class WC_IDPay extends WC_Payment_Gateway {
 				wp_redirect( $woocommerce->cart->get_checkout_url() );
 				exit;
 			} elseif ( $status == 'processing' ) {
-				$order->payment_complete( $inquiry_id );
+				$order->payment_complete( $verify_id );
 				$order->update_status( $status );
 				$woocommerce->cart->empty_cart();
 				$this->idpay_display_success_message( $order_id );

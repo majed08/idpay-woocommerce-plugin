@@ -302,7 +302,7 @@ class WC_IDPay extends WC_Payment_Gateway {
 			exit;
 		}
 
-		if ( get_post_meta( $order_id, '_transaction_id', TRUE ) != $_POST['id'] ) {
+		if ( $this->double_spending_occurred($order_id, $_POST['id']) ) {
 			$this->idpay_display_invalid_order_message();
 			wp_redirect( $woocommerce->cart->get_checkout_url() );
 			exit;
@@ -456,5 +456,20 @@ class WC_IDPay extends WC_Payment_Gateway {
 		$notice = str_replace( "{track_id}", $track_id, $notice );
 		$notice = str_replace( "{order_id}", $order_id, $notice );
 		wc_add_notice( $notice, 'error' );
+	}
+
+	/**
+	 * Checks if double-spending is occurred.
+	 *
+	 * @param $order_id
+	 * @param $remote_id
+	 *
+	 * @return bool
+	 */
+	private function double_spending_occurred($order_id, $remote_id) {
+		if (get_post_meta( $order_id, '_transaction_id', TRUE ) != $remote_id) {
+			return true;
+		}
+		return false;
 	}
 }

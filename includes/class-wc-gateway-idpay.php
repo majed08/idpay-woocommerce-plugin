@@ -203,7 +203,7 @@ class WC_IDPay extends WC_Payment_Gateway {
 		global $woocommerce;
 
 		$order    = new WC_Order( $order_id );
-		$currency = $order->get_order_currency();
+		$currency = $order->get_currency();
 		$currency = apply_filters( 'WC_IDPay_Currency', $currency, $order_id );
 
 		$api_key = $this->api_key;

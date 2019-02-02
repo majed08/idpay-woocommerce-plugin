@@ -209,7 +209,7 @@ class WC_IDPay extends WC_Payment_Gateway {
 		$api_key = $this->api_key;
 		$sandbox = $this->sandbox == 'no' ? 'false' : 'true';
 
-		$amount   = wc_idpay_get_amount( intval( $order->order_total ), $currency );
+		$amount   = wc_idpay_get_amount( intval( $order->get_total() ), $currency );
 		$desc     = __( 'Oder number #', 'woo-idpay-gateway' ) . $order->get_order_number();
 		$callback = add_query_arg( 'wc_order', $order_id, WC()->api_request_url( 'wc_idpay' ) );
 
@@ -383,7 +383,7 @@ class WC_IDPay extends WC_Payment_Gateway {
 
 			$currency = $order->get_currency();
 			$currency = apply_filters( 'WC_IDPay_Currency', $currency, $order_id );
-			$amount   = wc_idpay_get_amount( intval( $order->order_total ), $currency );
+			$amount   = wc_idpay_get_amount( intval( $order->get_total() ), $currency );
 
 			if ( empty( $verify_status ) || empty( $verify_track_id ) || empty( $verify_amount ) || $verify_amount != $amount ) {
 				$note = __( 'Error in transaction status or inconsistency with payment gateway information', 'woo-idpay-gateway' );

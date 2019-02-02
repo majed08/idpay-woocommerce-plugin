@@ -60,7 +60,7 @@ class WC_IDPay extends WC_Payment_Gateway {
 		$this->sandbox = $this->get_option( 'sandbox' );
 
 		$this->payment_endpoint = $this->get_option( 'payment_endpoint' );
-		$this->verify_endpoint = $this->get_option( 'verify_endpoint' );
+		$this->verify_endpoint  = $this->get_option( 'verify_endpoint' );
 
 		$this->success_massage = $this->get_option( 'success_massage' );
 		$this->failed_massage  = $this->get_option( 'failed_massage' );
@@ -146,13 +146,13 @@ class WC_IDPay extends WC_Payment_Gateway {
 				'type'        => 'checkbox',
 				'default'     => 'no',
 			),
-			'payment_endpoint'           => array(
+			'payment_endpoint'  => array(
 				'title'       => __( 'Payment endpoint', 'woo-idpay-gateway' ),
 				'type'        => 'text',
 				'description' => __( '', 'woo-idpay-gateway' ),
 				'default'     => 'https://test.idpay.ir/v1.1/payment',
 			),
-			'verify_endpoint'           => array(
+			'verify_endpoint'   => array(
 				'title'       => __( 'Verify endpoint', 'woo-idpay-gateway' ),
 				'type'        => 'text',
 				'description' => __( '', 'woo-idpay-gateway' ),
@@ -302,7 +302,7 @@ class WC_IDPay extends WC_Payment_Gateway {
 			exit;
 		}
 
-		if ( $this->double_spending_occurred($order_id, $_POST['id']) ) {
+		if ( $this->double_spending_occurred( $order_id, $_POST['id'] ) ) {
 			$this->idpay_display_invalid_order_message();
 			wp_redirect( $woocommerce->cart->get_checkout_url() );
 			exit;
@@ -466,10 +466,11 @@ class WC_IDPay extends WC_Payment_Gateway {
 	 *
 	 * @return bool
 	 */
-	private function double_spending_occurred($order_id, $remote_id) {
-		if (get_post_meta( $order_id, '_transaction_id', TRUE ) != $remote_id) {
-			return true;
+	private function double_spending_occurred( $order_id, $remote_id ) {
+		if ( get_post_meta( $order_id, '_transaction_id', TRUE ) != $remote_id ) {
+			return TRUE;
 		}
-		return false;
+
+		return FALSE;
 	}
 }

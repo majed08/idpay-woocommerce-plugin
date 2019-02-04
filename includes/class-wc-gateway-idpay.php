@@ -374,7 +374,7 @@ class WC_IDPay extends WC_Payment_Gateway {
 			$verify_id       = empty( $result->id ) ? NULL : $result->id;
 			$verify_order_id = empty( $result->order_id ) ? NULL : $result->order_id;
 			$verify_amount   = empty( $result->amount ) ? NULL : $result->amount;
-			$verify_card_no  = empty( $result->card_no ) ? NULL : $result->card_no;
+			$verify_card_no  = empty( $result->payment->card_no ) ? NULL : $result->payment->card_no;
 			$verify_date     = empty( $result->date ) ? NULL : $result->date;
 
 			$status = ( $verify_status >= 100 ) ? 'processing' : 'failed';
@@ -389,7 +389,7 @@ class WC_IDPay extends WC_Payment_Gateway {
 
 			$note = sprintf( __( 'Payer card number: %s', 'woo-idpay-gateway' ), $verify_card_no );
 			$order->add_order_note( $note );
-			update_post_meta( $order_id, 'idpay_card_no', $verify_card_no );
+			update_post_meta( $order_id, 'idpay_payment_card_no', $verify_card_no );
 
 			$currency = $order->get_currency();
 			$currency = apply_filters( 'WC_IDPay_Currency', $currency, $order_id );

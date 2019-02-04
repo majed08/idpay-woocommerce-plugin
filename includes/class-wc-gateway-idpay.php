@@ -35,6 +35,20 @@ class WC_IDPay extends WC_Payment_Gateway {
 	 */
 	protected $failed_massage;
 
+	/**
+	 * The payment endpoint
+	 *
+	 * @var string
+	 */
+	protected $payment_endpoint;
+
+	/**
+	 * The verify endpoint
+	 *
+	 * @var string
+	 */
+	protected $verify_endpoint;
+
 
 	/**
 	 * Constructor for the gateway.
@@ -59,8 +73,8 @@ class WC_IDPay extends WC_Payment_Gateway {
 		$this->api_key = $this->get_option( 'api_key' );
 		$this->sandbox = $this->get_option( 'sandbox' );
 
-		$this->payment_endpoint = $this->get_option( 'payment_endpoint' );
-		$this->verify_endpoint  = $this->get_option( 'verify_endpoint' );
+		$this->payment_endpoint = 'https://test.idpay.ir/v1.1/payment';
+		$this->verify_endpoint  = 'https://test.idpay.ir/v1.1/payment/verify';
 
 		$this->success_massage = $this->get_option( 'success_massage' );
 		$this->failed_massage  = $this->get_option( 'failed_massage' );
@@ -145,18 +159,6 @@ class WC_IDPay extends WC_Payment_Gateway {
 				'description' => __( 'If you check this option, the gateway works in test (sandbox) mode.', 'woo-idpay-gateway' ),
 				'type'        => 'checkbox',
 				'default'     => 'no',
-			),
-			'payment_endpoint'  => array(
-				'title'       => __( 'Payment endpoint', 'woo-idpay-gateway' ),
-				'type'        => 'text',
-				'description' => __( '', 'woo-idpay-gateway' ),
-				'default'     => 'https://test.idpay.ir/v1.1/payment',
-			),
-			'verify_endpoint'   => array(
-				'title'       => __( 'Verify endpoint', 'woo-idpay-gateway' ),
-				'type'        => 'text',
-				'description' => __( '', 'woo-idpay-gateway' ),
-				'default'     => 'https://test.idpay.ir/v1.1/payment/verify',
 			),
 			'message_confing'   => array(
 				'title'       => __( 'Payment message configuration', 'woo-idpay-gateway' ),

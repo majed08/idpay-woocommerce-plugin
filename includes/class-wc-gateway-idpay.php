@@ -272,6 +272,8 @@ class WC_IDPay extends WC_Payment_Gateway {
 		// Save ID of this transaction
 		update_post_meta( $order_id, 'idpay_transaction_id', $result->id );
 
+		update_post_meta( $order_id, 'idpay_transaction_status', 0 );
+
 		$note = sprintf( __( 'transaction id: %s', 'woo-idpay-gateway' ), $result->id );
 		$order->add_order_note( $note );
 
@@ -311,6 +313,12 @@ class WC_IDPay extends WC_Payment_Gateway {
 		}
 
 		if ( $order->get_status() == 'completed' || $order->get_status() == 'processing' ) {
+			$this->idpay_display_success_message( $order_id );
+			wp_redirect( add_query_arg( 'wc_status', 'success', $this->get_return_url( $order ) ) );
+			exit;
+		}
+
+		if ( get_post_meta( $order_id, 'idpay_transaction_status', TRUE ) >= 100 ) {
 			$this->idpay_display_success_message( $order_id );
 			wp_redirect( add_query_arg( 'wc_status', 'success', $this->get_return_url( $order ) ) );
 			exit;
@@ -377,7 +385,7 @@ class WC_IDPay extends WC_Payment_Gateway {
 
 			$note = sprintf( __( 'Transaction payment status: %s', 'woo-idpay-gateway' ), $verify_status );
 			$order->add_order_note( $note );
-			update_post_meta( $order_id, 'idpay_status', $verify_status );
+			update_post_meta( $order_id, 'idpay_transaction_status', $verify_status );
 
 			$note = sprintf( __( 'Payer card number: %s', 'woo-idpay-gateway' ), $verify_card_no );
 			$order->add_order_note( $note );

@@ -237,6 +237,7 @@ class WC_IDPay extends WC_Payment_Gateway {
 		$args = array(
 			'body'    => json_encode( $data ),
 			'headers' => $headers,
+			'timeout' => 30,
 		);
 
 
@@ -331,6 +332,7 @@ class WC_IDPay extends WC_Payment_Gateway {
 		$args = array(
 			'body'    => json_encode( $data ),
 			'headers' => $headers,
+			'timeout' => 30,
 		);
 
 		$response    = wp_safe_remote_post( $this->verify_endpoint, $args );

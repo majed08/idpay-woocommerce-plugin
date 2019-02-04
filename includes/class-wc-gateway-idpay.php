@@ -270,7 +270,7 @@ class WC_IDPay extends WC_Payment_Gateway {
 		}
 
 		// Save ID of this transaction
-		update_post_meta( $order_id, '_transaction_id', $result->id );
+		update_post_meta( $order_id, 'idpay_transaction_id', $result->id );
 
 		$note = sprintf( __( 'transaction id: %s', 'woo-idpay-gateway' ), $result->id );
 		$order->add_order_note( $note );
@@ -320,7 +320,7 @@ class WC_IDPay extends WC_Payment_Gateway {
 		$sandbox = $this->sandbox == 'no' ? 'false' : 'true';
 
 		$data = array(
-			'id'       => get_post_meta( $order_id, '_transaction_id', TRUE ),
+			'id'       => get_post_meta( $order_id, 'idpay_transaction_id', TRUE ),
 			'order_id' => $order_id,
 		);
 
@@ -469,7 +469,7 @@ class WC_IDPay extends WC_Payment_Gateway {
 	 * @return bool
 	 */
 	private function double_spending_occurred( $order_id, $remote_id ) {
-		if ( get_post_meta( $order_id, '_transaction_id', TRUE ) != $remote_id ) {
+		if ( get_post_meta( $order_id, 'idpay_transaction_id', TRUE ) != $remote_id ) {
 			return TRUE;
 		}
 

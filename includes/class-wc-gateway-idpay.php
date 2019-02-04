@@ -274,7 +274,6 @@ class WC_IDPay extends WC_Payment_Gateway {
 
 		$note = sprintf( __( 'transaction id: %s', 'woo-idpay-gateway' ), $result->id );
 		$order->add_order_note( $note );
-		update_post_meta( $order_id, 'idpay_id', $result->id );
 
 		wp_redirect( $result->link );
 	}

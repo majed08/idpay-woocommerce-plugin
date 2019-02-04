@@ -347,18 +347,17 @@ class WC_IDPay extends WC_Payment_Gateway {
 			$note .= __( 'An error occurred while verifying the transaction.', 'woo-idpay-gateway' );
 			$note .= '<br/>';
 			$note .= sprintf( __( 'error status: %s', 'woo-idpay-gateway' ), $http_status );
-			$order->add_order_note( $note );
 
 			if ( ! empty( $result->error_code ) && ! empty( $result->error_message ) ) {
-				$note = '';
 				$note .= sprintf( __( 'error code: %s', 'woo-idpay-gateway' ), $result->error_code );
 				$note .= '<br/>';
 				$note .= sprintf( __( 'error message: %s', 'woo-idpay-gateway' ), $result->error_message );
-				$order->add_order_note( $note );
 
 				$notice = $result->error_message;
 				wc_add_notice( $notice, 'error' );
 			}
+			$order->add_order_note( $note );
+			$order->update_status( 'failed' );
 
 			wp_redirect( $woocommerce->cart->get_checkout_url() );
 			exit;

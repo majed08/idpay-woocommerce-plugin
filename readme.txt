@@ -26,6 +26,10 @@ After creating a web service on https://idpay.ir and getting an API Key, follow 
 
 If you need to use this plugin in Test mode, check the "Sandbox".
 
+Also there is a complete documentation [here](https://blog.idpay.ir/helps/99) which helps you to install the plugin step by step.
+
+Thank you so much for using IDPay Payment Gateway.
+
 == Changelog ==
 
 = 2.0, February 05, 2019 =

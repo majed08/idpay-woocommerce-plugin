@@ -25,5 +25,5 @@ function woo_idpay_gateway_load_textdomain() {
 
 add_action( 'init', 'woo_idpay_gateway_load_textdomain' );
 
-require_once( 'includes/wc-geteway-idpay-helpers.php' );
+require_once( 'includes/wc-gateway-idpay-helpers.php' );
 require_once( 'includes/wc-gateway-idpay-init.php' );

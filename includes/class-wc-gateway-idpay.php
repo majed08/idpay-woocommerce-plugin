@@ -224,7 +224,7 @@ class WC_IDPay extends WC_Payment_Gateway {
 		$callback = add_query_arg( 'wc_order', $order_id, WC()->api_request_url( 'wc_idpay' ) );
 
 		if ( empty( $amount ) ) {
-			$notice = __( 'selected currency is not supported', 'woo-idpay-gateway' );
+			$notice = __( 'Selected currency is not supported', 'woo-idpay-gateway' ); //todo
 			wc_add_notice( $notice, 'error' );
 
 			return FALSE;
@@ -296,19 +296,15 @@ class WC_IDPay extends WC_Payment_Gateway {
 	public function idpay_checkout_return_handler() {
 		global $woocommerce;
 
-		if ( empty( $_POST['id'] ) || empty( $_POST['order_id'] ) ) {
-			return FALSE;
-		}
+		$status   = empty( $_POST['status'] ) ? NULL : $_POST['status'];
+		$track_id = empty( $_POST['track_id'] ) ? NULL : $_POST['track_id'];
+		$id       = empty( $_POST['id'] ) ? NULL : $_POST['id'];
+		$order_id = empty( $_POST['order_id'] ) ? NULL : $_POST['order_id'];
+		$amount   = empty( $_POST['amount'] ) ? NULL : $_POST['amount'];
+		$card_no  = empty( $_POST['card_no'] ) ? NULL : $_POST['card_no'];
+		$date     = empty( $_POST['date'] ) ? NULL : $_POST['date'];
 
-		$status   = $_POST['status'];
-		$track_id = $_POST['track_id'];
-		$id       = $_POST['id'];
-		$order_id = $_POST['order_id'];
-		$amount   = $_POST['amount'];
-		$card_no  = $_POST['card_no'];
-		$date     = $_POST['date'];
-
-		if ( empty( $order_id ) ) {
+		if ( empty( $id ) || empty( $order_id ) ) {
 			$this->idpay_display_invalid_order_message();
 			wp_redirect( $woocommerce->cart->get_checkout_url() );
 			exit;
@@ -322,7 +318,7 @@ class WC_IDPay extends WC_Payment_Gateway {
 			exit;
 		}
 
-		if ( $this->double_spending_occurred( $order_id, $_POST['id'] ) ) {
+		if ( $this->double_spending_occurred( $order_id, $id ) ) {
 			$this->idpay_display_invalid_order_message();
 			wp_redirect( $woocommerce->cart->get_checkout_url() );
 			exit;
@@ -347,7 +343,7 @@ class WC_IDPay extends WC_Payment_Gateway {
 		update_post_meta( $order_id, 'idpay_transaction_order_id', $order_id );
 		update_post_meta( $order_id, 'idpay_transaction_amount', $amount );
 		update_post_meta( $order_id, 'idpay_payment_card_no', $card_no );
-		update_post_meta( $order_id, 'idpay_transaction_date', $date );
+		update_post_meta( $order_id, 'idpay_payment_date', $date ); // todo
 
 		if ( $status != 10 ) {
 			$order->update_status( 'failed' );
@@ -395,6 +391,7 @@ class WC_IDPay extends WC_Payment_Gateway {
 				$notice = $result->error_message;
 				wc_add_notice( $notice, 'error' );
 			}
+
 			$order->add_order_note( $note );
 			$order->update_status( 'failed' );
 
@@ -407,10 +404,11 @@ class WC_IDPay extends WC_Payment_Gateway {
 			$verify_order_id = empty( $result->order_id ) ? NULL : $result->order_id;
 			$verify_amount   = empty( $result->amount ) ? NULL : $result->amount;
 			$verify_card_no  = empty( $result->payment->card_no ) ? NULL : $result->payment->card_no;
-			$verify_date     = empty( $result->date ) ? NULL : $result->date;
+			$verify_date     = empty( $result->payment->date ) ? NULL : $result->payment->date;
 
 			$status = ( $verify_status >= 100 ) ? 'processing' : 'failed';
 
+			// todo: merge messages
 			$note = sprintf( __( 'Transaction payment status: %s', 'woo-idpay-gateway' ), $verify_status );
 			$order->add_order_note( $note );
 
@@ -427,7 +425,7 @@ class WC_IDPay extends WC_Payment_Gateway {
 			update_post_meta( $order_id, 'idpay_transaction_order_id', $verify_order_id );
 			update_post_meta( $order_id, 'idpay_transaction_amount', $verify_amount );
 			update_post_meta( $order_id, 'idpay_payment_card_no', $verify_card_no );
-			update_post_meta( $order_id, 'idpay_transaction_date', $verify_date );
+			update_post_meta( $order_id, 'idpay_payment_date', $verify_date ); // todo
 
 			$currency = $order->get_currency();
 			$currency = apply_filters( 'WC_IDPay_Currency', $currency, $order_id );

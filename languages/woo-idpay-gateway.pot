@@ -121,7 +121,7 @@ msgid "Oder number #"
 msgstr ""
 
 #: includes/class-wc-gateway-idpay.php:202
-msgid "selected currency is not supported"
+msgid "Selected currency is not supported"
 msgstr ""
 
 #: includes/class-wc-gateway-idpay.php:235

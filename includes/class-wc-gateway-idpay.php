@@ -300,7 +300,13 @@ class WC_IDPay extends WC_Payment_Gateway {
 			return FALSE;
 		}
 
+		$status   = $_POST['status'];
+		$track_id = $_POST['track_id'];
+		$id       = $_POST['id'];
 		$order_id = $_POST['order_id'];
+		$amount   = $_POST['amount'];
+		$card_no  = $_POST['card_no'];
+		$date     = $_POST['date'];
 
 		if ( empty( $order_id ) ) {
 			$this->idpay_display_invalid_order_message();
@@ -331,6 +337,22 @@ class WC_IDPay extends WC_Payment_Gateway {
 		if ( get_post_meta( $order_id, 'idpay_transaction_status', TRUE ) >= 100 ) {
 			$this->idpay_display_success_message( $order_id );
 			wp_redirect( add_query_arg( 'wc_status', 'success', $this->get_return_url( $order ) ) );
+			exit;
+		}
+
+		// Stores order's meta data.
+		update_post_meta( $order_id, 'idpay_transaction_status', $status );
+		update_post_meta( $order_id, 'idpay_track_id', $track_id );
+		update_post_meta( $order_id, 'idpay_transaction_id', $id );
+		update_post_meta( $order_id, 'idpay_transaction_order_id', $order_id );
+		update_post_meta( $order_id, 'idpay_transaction_amount', $amount );
+		update_post_meta( $order_id, 'idpay_payment_card_no', $card_no );
+		update_post_meta( $order_id, 'idpay_transaction_date', $date );
+
+		if ( $status != 10 ) {
+			$order->update_status( 'failed' );
+			$this->idpay_display_failed_message( $order_id );
+			wp_redirect( $woocommerce->cart->get_checkout_url() );
 			exit;
 		}
 
@@ -389,17 +411,23 @@ class WC_IDPay extends WC_Payment_Gateway {
 
 			$status = ( $verify_status >= 100 ) ? 'processing' : 'failed';
 
-			$note = sprintf( __( 'IDPay tracking id: %s', 'woo-idpay-gateway' ), $verify_track_id );
-			$order->add_order_note( $note );
-			update_post_meta( $order_id, 'idpay_track_id', $verify_track_id );
-
 			$note = sprintf( __( 'Transaction payment status: %s', 'woo-idpay-gateway' ), $verify_status );
 			$order->add_order_note( $note );
-			update_post_meta( $order_id, 'idpay_transaction_status', $verify_status );
+
+			$note = sprintf( __( 'IDPay tracking id: %s', 'woo-idpay-gateway' ), $verify_track_id );
+			$order->add_order_note( $note );
 
 			$note = sprintf( __( 'Payer card number: %s', 'woo-idpay-gateway' ), $verify_card_no );
 			$order->add_order_note( $note );
+
+			// Updates order's meta data after verifying the payment.
+			update_post_meta( $order_id, 'idpay_transaction_status', $verify_status );
+			update_post_meta( $order_id, 'idpay_track_id', $verify_track_id );
+			update_post_meta( $order_id, 'idpay_transaction_id', $verify_id );
+			update_post_meta( $order_id, 'idpay_transaction_order_id', $verify_order_id );
+			update_post_meta( $order_id, 'idpay_transaction_amount', $verify_amount );
 			update_post_meta( $order_id, 'idpay_payment_card_no', $verify_card_no );
+			update_post_meta( $order_id, 'idpay_transaction_date', $verify_date );
 
 			$currency = $order->get_currency();
 			$currency = apply_filters( 'WC_IDPay_Currency', $currency, $order_id );

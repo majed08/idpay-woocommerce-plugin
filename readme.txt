@@ -28,6 +28,13 @@ If you need to use this plugin in Test mode, check the "Sandbox".
 
 == Changelog ==
 
+= 2.0, February 05, 2019 =
+* Publish for web service version 1.1.
+* Improvements in the code.
+* Increase timeout of wp_safe_remote_post().
+* Fix bugs.
+* Send customer information such as phone and email to the gateway.
+
 = 1.0.6, December 09, 2018 =
 * Change order status to 'processing' after a successful payment.
 * Add 'Domain Path' to the plugin descriptions.

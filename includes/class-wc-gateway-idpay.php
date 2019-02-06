@@ -265,10 +265,9 @@ class WC_IDPay extends WC_Payment_Gateway {
 			$note .= __( 'An error occurred while creating the transaction.', 'woo-idpay-gateway' );
 			$note .= '<br/>';
 			$note .= sprintf( __( 'error status: %s', 'woo-idpay-gateway' ), $http_status );
-			$order->add_order_note( $note );
 
 			if ( ! empty( $result->error_code ) && ! empty( $result->error_message ) ) {
-				$note = '';
+				$note .= '<br/>';
 				$note .= sprintf( __( 'error code: %s', 'woo-idpay-gateway' ), $result->error_code );
 				$note .= '<br/>';
 				$note .= sprintf( __( 'error message: %s', 'woo-idpay-gateway' ), $result->error_message );
@@ -386,6 +385,7 @@ class WC_IDPay extends WC_Payment_Gateway {
 			$note .= sprintf( __( 'error status: %s', 'woo-idpay-gateway' ), $http_status );
 
 			if ( ! empty( $result->error_code ) && ! empty( $result->error_message ) ) {
+				$note .= '<br/>';
 				$note .= sprintf( __( 'error code: %s', 'woo-idpay-gateway' ), $result->error_code );
 				$note .= '<br/>';
 				$note .= sprintf( __( 'error message: %s', 'woo-idpay-gateway' ), $result->error_message );

@@ -309,6 +309,7 @@ class WC_IDPay extends WC_Payment_Gateway {
 		if ( empty( $id ) || empty( $order_id ) ) {
 			$this->idpay_display_invalid_order_message();
 			wp_redirect( $woocommerce->cart->get_checkout_url() );
+
 			return FALSE;
 		}
 
@@ -317,24 +318,28 @@ class WC_IDPay extends WC_Payment_Gateway {
 		if ( empty( $order ) ) {
 			$this->idpay_display_invalid_order_message();
 			wp_redirect( $woocommerce->cart->get_checkout_url() );
+
 			return FALSE;
 		}
 
 		if ( $this->double_spending_occurred( $order_id, $id ) ) {
 			$this->idpay_display_invalid_order_message();
 			wp_redirect( $woocommerce->cart->get_checkout_url() );
+
 			return FALSE;
 		}
 
 		if ( $order->get_status() == 'completed' || $order->get_status() == 'processing' ) {
 			$this->idpay_display_success_message( $order_id );
 			wp_redirect( add_query_arg( 'wc_status', 'success', $this->get_return_url( $order ) ) );
+
 			return FALSE;
 		}
 
 		if ( get_post_meta( $order_id, 'idpay_transaction_status', TRUE ) >= 100 ) {
 			$this->idpay_display_success_message( $order_id );
 			wp_redirect( add_query_arg( 'wc_status', 'success', $this->get_return_url( $order ) ) );
+
 			return FALSE;
 		}
 
@@ -351,6 +356,7 @@ class WC_IDPay extends WC_Payment_Gateway {
 			$order->update_status( 'failed' );
 			$this->idpay_display_failed_message( $order_id );
 			wp_redirect( $woocommerce->cart->get_checkout_url() );
+
 			return FALSE;
 		}
 
@@ -399,6 +405,7 @@ class WC_IDPay extends WC_Payment_Gateway {
 			$order->update_status( 'failed' );
 
 			wp_redirect( $woocommerce->cart->get_checkout_url() );
+
 			return FALSE;
 		} else {
 			$verify_status   = empty( $result->status ) ? NULL : $result->status;
@@ -442,6 +449,7 @@ class WC_IDPay extends WC_Payment_Gateway {
 				$this->idpay_display_failed_message( $order_id );
 
 				wp_redirect( $woocommerce->cart->get_checkout_url() );
+
 				return FALSE;
 			} elseif ( $status == 'processing' ) {
 				$order->payment_complete( $verify_id );
@@ -450,6 +458,7 @@ class WC_IDPay extends WC_Payment_Gateway {
 				$this->idpay_display_success_message( $order_id );
 
 				wp_redirect( add_query_arg( 'wc_status', 'success', $this->get_return_url( $order ) ) );
+
 				return FALSE;
 			}
 		}

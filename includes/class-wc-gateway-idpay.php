@@ -73,8 +73,8 @@ class WC_IDPay extends WC_Payment_Gateway {
 		$this->api_key = $this->get_option( 'api_key' );
 		$this->sandbox = $this->get_option( 'sandbox' );
 
-		$this->payment_endpoint = 'https://test.idpay.ir/v1.1/payment';
-		$this->verify_endpoint  = 'https://test.idpay.ir/v1.1/payment/verify';
+		$this->payment_endpoint = 'https://api.idpay.ir/v1.1/payment';
+		$this->verify_endpoint  = 'https://api.idpay.ir/v1.1/payment/verify';
 
 		$this->success_message = $this->get_option( 'success_message' );
 		$this->failed_message  = $this->get_option( 'failed_message' );

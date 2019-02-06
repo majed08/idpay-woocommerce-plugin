@@ -345,7 +345,7 @@ class WC_IDPay extends WC_Payment_Gateway {
 		update_post_meta( $order_id, 'idpay_transaction_order_id', $order_id );
 		update_post_meta( $order_id, 'idpay_transaction_amount', $amount );
 		update_post_meta( $order_id, 'idpay_payment_card_no', $card_no );
-		update_post_meta( $order_id, 'idpay_payment_date', $date ); // todo
+		update_post_meta( $order_id, 'idpay_payment_date', $date );
 
 		if ( $status != 10 ) {
 			$order->update_status( 'failed' );
@@ -428,7 +428,7 @@ class WC_IDPay extends WC_Payment_Gateway {
 			update_post_meta( $order_id, 'idpay_transaction_order_id', $verify_order_id );
 			update_post_meta( $order_id, 'idpay_transaction_amount', $verify_amount );
 			update_post_meta( $order_id, 'idpay_payment_card_no', $verify_card_no );
-			update_post_meta( $order_id, 'idpay_payment_date', $verify_date ); // todo
+			update_post_meta( $order_id, 'idpay_payment_date', $verify_date );
 
 			$currency = $order->get_currency();
 			$currency = apply_filters( 'WC_IDPay_Currency', $currency, $order_id );

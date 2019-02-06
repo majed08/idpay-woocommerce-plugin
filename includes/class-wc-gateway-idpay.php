@@ -411,14 +411,11 @@ class WC_IDPay extends WC_Payment_Gateway {
 
 			$status = ( $verify_status >= 100 ) ? 'processing' : 'failed';
 
-			// todo: merge messages
 			$note = sprintf( __( 'Transaction payment status: %s', 'woo-idpay-gateway' ), $verify_status );
-			$order->add_order_note( $note );
-
-			$note = sprintf( __( 'IDPay tracking id: %s', 'woo-idpay-gateway' ), $verify_track_id );
-			$order->add_order_note( $note );
-
-			$note = sprintf( __( 'Payer card number: %s', 'woo-idpay-gateway' ), $verify_card_no );
+			$note .= '<br/>';
+			$note .= sprintf( __( 'IDPay tracking id: %s', 'woo-idpay-gateway' ), $verify_track_id );
+			$note .= '<br/>';
+			$note .= sprintf( __( 'Payer card number: %s', 'woo-idpay-gateway' ), $verify_card_no );
 			$order->add_order_note( $note );
 
 			// Updates order's meta data after verifying the payment.

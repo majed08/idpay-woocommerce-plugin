@@ -309,7 +309,7 @@ class WC_IDPay extends WC_Payment_Gateway {
 		if ( empty( $id ) || empty( $order_id ) ) {
 			$this->idpay_display_invalid_order_message();
 			wp_redirect( $woocommerce->cart->get_checkout_url() );
-			exit;
+			return FALSE;
 		}
 
 		$order = wc_get_order( $order_id );
@@ -317,25 +317,25 @@ class WC_IDPay extends WC_Payment_Gateway {
 		if ( empty( $order ) ) {
 			$this->idpay_display_invalid_order_message();
 			wp_redirect( $woocommerce->cart->get_checkout_url() );
-			exit;
+			return FALSE;
 		}
 
 		if ( $this->double_spending_occurred( $order_id, $id ) ) {
 			$this->idpay_display_invalid_order_message();
 			wp_redirect( $woocommerce->cart->get_checkout_url() );
-			exit;
+			return FALSE;
 		}
 
 		if ( $order->get_status() == 'completed' || $order->get_status() == 'processing' ) {
 			$this->idpay_display_success_message( $order_id );
 			wp_redirect( add_query_arg( 'wc_status', 'success', $this->get_return_url( $order ) ) );
-			exit;
+			return FALSE;
 		}
 
 		if ( get_post_meta( $order_id, 'idpay_transaction_status', TRUE ) >= 100 ) {
 			$this->idpay_display_success_message( $order_id );
 			wp_redirect( add_query_arg( 'wc_status', 'success', $this->get_return_url( $order ) ) );
-			exit;
+			return FALSE;
 		}
 
 		// Stores order's meta data.
@@ -351,7 +351,7 @@ class WC_IDPay extends WC_Payment_Gateway {
 			$order->update_status( 'failed' );
 			$this->idpay_display_failed_message( $order_id );
 			wp_redirect( $woocommerce->cart->get_checkout_url() );
-			exit;
+			return FALSE;
 		}
 
 		$api_key = $this->api_key;
@@ -399,7 +399,7 @@ class WC_IDPay extends WC_Payment_Gateway {
 			$order->update_status( 'failed' );
 
 			wp_redirect( $woocommerce->cart->get_checkout_url() );
-			exit;
+			return FALSE;
 		} else {
 			$verify_status   = empty( $result->status ) ? NULL : $result->status;
 			$verify_track_id = empty( $result->track_id ) ? NULL : $result->track_id;
@@ -445,7 +445,7 @@ class WC_IDPay extends WC_Payment_Gateway {
 				$this->idpay_display_failed_message( $order_id );
 
 				wp_redirect( $woocommerce->cart->get_checkout_url() );
-				exit;
+				return FALSE;
 			} elseif ( $status == 'processing' ) {
 				$order->payment_complete( $verify_id );
 				$order->update_status( $status );
@@ -453,7 +453,7 @@ class WC_IDPay extends WC_Payment_Gateway {
 				$this->idpay_display_success_message( $order_id );
 
 				wp_redirect( add_query_arg( 'wc_status', 'success', $this->get_return_url( $order ) ) );
-				exit;
+				return FALSE;
 			}
 		}
 	}

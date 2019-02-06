@@ -211,13 +211,15 @@ class WC_IDPay extends WC_Payment_Gateway {
 		$api_key = $this->api_key;
 		$sandbox = $this->sandbox == 'no' ? 'false' : 'true';
 
+		/** @var \WC_Customer $customer */
+		$customer = $woocommerce->customer;
+
 		// Customer information
-		$customer_id = get_current_user_id();
-		$phone       = get_user_meta( $customer_id, 'billing_phone', TRUE );
-		$mail        = get_user_meta( $customer_id, 'billing_email', TRUE );
-		$first_name  = get_user_meta( $customer_id, 'billing_first_name', TRUE );
-		$last_name   = get_user_meta( $customer_id, 'billing_last_name', TRUE );
-		$name        = $first_name . ' ' . $last_name;
+		$phone      = $customer->get_billing_phone();
+		$mail       = $customer->get_billing_email();
+		$first_name = $customer->get_billing_first_name();
+		$last_name  = $customer->get_billing_last_name();
+		$name       = $first_name . ' ' . $last_name;
 
 		$amount   = wc_idpay_get_amount( intval( $order->get_total() ), $currency );
 		$desc     = __( 'Oder number #', 'woo-idpay-gateway' ) . $order->get_order_number();

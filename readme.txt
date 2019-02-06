@@ -32,7 +32,7 @@ Thank you so much for using IDPay Payment Gateway.
 
 == Changelog ==
 
-= 2.1, February 06, 2019 =
+= 2.0.1, February 06, 2019 =
 * Fix bug.
 
 = 2.0, February 05, 2019 =

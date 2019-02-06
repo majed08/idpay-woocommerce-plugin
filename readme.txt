@@ -1,7 +1,8 @@
 === IDPay Payment Gateway for Woocommerce ===
 Contributors: majidlotfinia, jazaali, imikiani
-Tags: woocommerce, payment, idpay, gateway
-Stable tag: 1.0.6
+Tags: woocommerce, payment, idpay, gateway, آیدی پی
+Stable tag: 2.1
+Tested up to: 5.0.3
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -25,7 +26,21 @@ After creating a web service on https://idpay.ir and getting an API Key, follow 
 
 If you need to use this plugin in Test mode, check the "Sandbox".
 
+Also there is a complete documentation [here](https://blog.idpay.ir/helps/99) which helps you to install the plugin step by step.
+
+Thank you so much for using IDPay Payment Gateway.
+
 == Changelog ==
+
+= 2.0.1, February 06, 2019 =
+* Fix bug.
+
+= 2.0, February 05, 2019 =
+* Publish for web service version 1.1.
+* Improvements in the code.
+* Increase timeout of wp_safe_remote_post().
+* Fix bugs.
+* Send customer information such as phone and email to the gateway.
 
 = 1.0.6, December 09, 2018 =
 * Change order status to 'processing' after a successful payment.

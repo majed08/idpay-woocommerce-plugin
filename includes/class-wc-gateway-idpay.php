@@ -26,14 +26,28 @@ class WC_IDPay extends WC_Payment_Gateway {
 	 *
 	 * @var string
 	 */
-	protected $success_massage;
+	protected $success_message;
 
 	/**
 	 * The payment failure message.
 	 *
 	 * @var string
 	 */
-	protected $failed_massage;
+	protected $failed_message;
+
+	/**
+	 * The payment endpoint
+	 *
+	 * @var string
+	 */
+	protected $payment_endpoint;
+
+	/**
+	 * The verify endpoint
+	 *
+	 * @var string
+	 */
+	protected $verify_endpoint;
 
 
 	/**
@@ -59,8 +73,11 @@ class WC_IDPay extends WC_Payment_Gateway {
 		$this->api_key = $this->get_option( 'api_key' );
 		$this->sandbox = $this->get_option( 'sandbox' );
 
-		$this->success_massage = $this->get_option( 'success_massage' );
-		$this->failed_massage  = $this->get_option( 'failed_massage' );
+		$this->payment_endpoint = 'https://api.idpay.ir/v1.1/payment';
+		$this->verify_endpoint  = 'https://api.idpay.ir/v1.1/payment/verify';
+
+		$this->success_message = $this->get_option( 'success_message' );
+		$this->failed_message  = $this->get_option( 'failed_message' );
 
 		if ( version_compare( WOOCOMMERCE_VERSION, '2.0.0', '>=' ) ) {
 			add_action( 'woocommerce_update_options_payment_gateways_' . $this->id, array(
@@ -148,13 +165,13 @@ class WC_IDPay extends WC_Payment_Gateway {
 				'type'        => 'title',
 				'description' => __( 'Configure the messages which are displayed when a customer is brought back to the site from the gateway.', 'woo-idpay-gateway' ),
 			),
-			'success_massage'   => array(
+			'success_message'   => array(
 				'title'       => __( 'Success message', 'woo-idpay-gateway' ),
 				'type'        => 'textarea',
 				'description' => __( 'Enter the message you want to display to the customer after a successful payment. You can also choose these placeholders {track_id}, {order_id} for showing the order id and the tracking id respectively.', 'woo-idpay-gateway' ),
 				'default'     => __( 'Your payment has been successfully completed. Track id: {track_id}', 'woo-idpay-gateway' ),
 			),
-			'failed_massage'    => array(
+			'failed_message'    => array(
 				'title'       => __( 'Failure message', 'woo-idpay-gateway' ),
 				'type'        => 'textarea',
 				'description' => __( 'Enter the message you want to display to the customer after a failure occurred in a payment. You can also choose these placeholders {track_id}, {order_id} for showing the order id and the tracking id respectively.', 'woo-idpay-gateway' ),
@@ -188,18 +205,28 @@ class WC_IDPay extends WC_Payment_Gateway {
 		global $woocommerce;
 
 		$order    = new WC_Order( $order_id );
-		$currency = $order->get_order_currency();
+		$currency = $order->get_currency();
 		$currency = apply_filters( 'WC_IDPay_Currency', $currency, $order_id );
 
 		$api_key = $this->api_key;
 		$sandbox = $this->sandbox == 'no' ? 'false' : 'true';
 
-		$amount   = wc_idpay_get_amount( intval( $order->order_total ), $currency );
+		/** @var \WC_Customer $customer */
+		$customer = $woocommerce->customer;
+
+		// Customer information
+		$phone      = $customer->get_billing_phone();
+		$mail       = $customer->get_billing_email();
+		$first_name = $customer->get_billing_first_name();
+		$last_name  = $customer->get_billing_last_name();
+		$name       = $first_name . ' ' . $last_name;
+
+		$amount   = wc_idpay_get_amount( intval( $order->get_total() ), $currency );
 		$desc     = __( 'Oder number #', 'woo-idpay-gateway' ) . $order->get_order_number();
 		$callback = add_query_arg( 'wc_order', $order_id, WC()->api_request_url( 'wc_idpay' ) );
 
 		if ( empty( $amount ) ) {
-			$notice = __( 'selected currency is not supported', 'woo-idpay-gateway' );
+			$notice = __( 'Selected currency is not supported', 'woo-idpay-gateway' ); //todo
 			wc_add_notice( $notice, 'error' );
 
 			return FALSE;
@@ -208,7 +235,9 @@ class WC_IDPay extends WC_Payment_Gateway {
 		$data = array(
 			'order_id' => $order_id,
 			'amount'   => $amount,
-			'phone'    => '',
+			'name'     => $name,
+			'phone'    => $phone,
+			'mail'     => $mail,
 			'desc'     => $desc,
 			'callback' => $callback,
 		);
@@ -222,10 +251,11 @@ class WC_IDPay extends WC_Payment_Gateway {
 		$args = array(
 			'body'    => json_encode( $data ),
 			'headers' => $headers,
+			'timeout' => 30,
 		);
 
 
-		$response    = wp_safe_remote_post( 'https://api.idpay.ir/v1/payment', $args );
+		$response    = wp_safe_remote_post( $this->payment_endpoint, $args );
 		$http_status = wp_remote_retrieve_response_code( $response );
 		$result      = wp_remote_retrieve_body( $response );
 		$result      = json_decode( $result );
@@ -235,10 +265,9 @@ class WC_IDPay extends WC_Payment_Gateway {
 			$note .= __( 'An error occurred while creating the transaction.', 'woo-idpay-gateway' );
 			$note .= '<br/>';
 			$note .= sprintf( __( 'error status: %s', 'woo-idpay-gateway' ), $http_status );
-			$order->add_order_note( $note );
 
 			if ( ! empty( $result->error_code ) && ! empty( $result->error_message ) ) {
-				$note = '';
+				$note .= '<br/>';
 				$note .= sprintf( __( 'error code: %s', 'woo-idpay-gateway' ), $result->error_code );
 				$note .= '<br/>';
 				$note .= sprintf( __( 'error message: %s', 'woo-idpay-gateway' ), $result->error_message );
@@ -252,11 +281,13 @@ class WC_IDPay extends WC_Payment_Gateway {
 		}
 
 		// Save ID of this transaction
-		update_post_meta( $order_id, '_transaction_id', $result->id );
+		update_post_meta( $order_id, 'idpay_transaction_id', $result->id );
+
+		// Set remote status of the transaction to 1 as it's primary value.
+		update_post_meta( $order_id, 'idpay_transaction_status', 1 );
 
 		$note = sprintf( __( 'transaction id: %s', 'woo-idpay-gateway' ), $result->id );
 		$order->add_order_note( $note );
-		update_post_meta( $order_id, 'idpay_id', $result->id );
 
 		wp_redirect( $result->link );
 	}
@@ -267,16 +298,19 @@ class WC_IDPay extends WC_Payment_Gateway {
 	public function idpay_checkout_return_handler() {
 		global $woocommerce;
 
-		if ( empty( $_POST['id'] ) || empty( $_POST['order_id'] ) ) {
-			return FALSE;
-		}
+		$status   = empty( $_POST['status'] ) ? NULL : $_POST['status'];
+		$track_id = empty( $_POST['track_id'] ) ? NULL : $_POST['track_id'];
+		$id       = empty( $_POST['id'] ) ? NULL : $_POST['id'];
+		$order_id = empty( $_POST['order_id'] ) ? NULL : $_POST['order_id'];
+		$amount   = empty( $_POST['amount'] ) ? NULL : $_POST['amount'];
+		$card_no  = empty( $_POST['card_no'] ) ? NULL : $_POST['card_no'];
+		$date     = empty( $_POST['date'] ) ? NULL : $_POST['date'];
 
-		$order_id = $_POST['order_id'];
-
-		if ( empty( $order_id ) ) {
+		if ( empty( $id ) || empty( $order_id ) ) {
 			$this->idpay_display_invalid_order_message();
 			wp_redirect( $woocommerce->cart->get_checkout_url() );
-			exit;
+
+			return FALSE;
 		}
 
 		$order = wc_get_order( $order_id );
@@ -284,26 +318,53 @@ class WC_IDPay extends WC_Payment_Gateway {
 		if ( empty( $order ) ) {
 			$this->idpay_display_invalid_order_message();
 			wp_redirect( $woocommerce->cart->get_checkout_url() );
-			exit;
+
+			return FALSE;
 		}
 
-		if ( get_post_meta( $order_id, '_transaction_id', TRUE ) != $_POST['id'] ) {
+		if ( $this->double_spending_occurred( $order_id, $id ) ) {
 			$this->idpay_display_invalid_order_message();
 			wp_redirect( $woocommerce->cart->get_checkout_url() );
-			exit;
+
+			return FALSE;
 		}
 
-		if ( $order->status == 'completed' || $order->status == 'processing' ) {
+		if ( $order->get_status() == 'completed' || $order->get_status() == 'processing' ) {
 			$this->idpay_display_success_message( $order_id );
 			wp_redirect( add_query_arg( 'wc_status', 'success', $this->get_return_url( $order ) ) );
-			exit;
+
+			return FALSE;
+		}
+
+		if ( get_post_meta( $order_id, 'idpay_transaction_status', TRUE ) >= 100 ) {
+			$this->idpay_display_success_message( $order_id );
+			wp_redirect( add_query_arg( 'wc_status', 'success', $this->get_return_url( $order ) ) );
+
+			return FALSE;
+		}
+
+		// Stores order's meta data.
+		update_post_meta( $order_id, 'idpay_transaction_status', $status );
+		update_post_meta( $order_id, 'idpay_track_id', $track_id );
+		update_post_meta( $order_id, 'idpay_transaction_id', $id );
+		update_post_meta( $order_id, 'idpay_transaction_order_id', $order_id );
+		update_post_meta( $order_id, 'idpay_transaction_amount', $amount );
+		update_post_meta( $order_id, 'idpay_payment_card_no', $card_no );
+		update_post_meta( $order_id, 'idpay_payment_date', $date );
+
+		if ( $status != 10 ) {
+			$order->update_status( 'failed' );
+			$this->idpay_display_failed_message( $order_id );
+			wp_redirect( $woocommerce->cart->get_checkout_url() );
+
+			return FALSE;
 		}
 
 		$api_key = $this->api_key;
 		$sandbox = $this->sandbox == 'no' ? 'false' : 'true';
 
 		$data = array(
-			'id'       => get_post_meta( $order_id, '_transaction_id', TRUE ),
+			'id'       => get_post_meta( $order_id, 'idpay_transaction_id', TRUE ),
 			'order_id' => $order_id,
 		);
 
@@ -316,9 +377,10 @@ class WC_IDPay extends WC_Payment_Gateway {
 		$args = array(
 			'body'    => json_encode( $data ),
 			'headers' => $headers,
+			'timeout' => 30,
 		);
 
-		$response    = wp_safe_remote_post( 'https://api.idpay.ir/v1/payment/inquiry', $args );
+		$response    = wp_safe_remote_post( $this->verify_endpoint, $args );
 		$http_status = wp_remote_retrieve_response_code( $response );
 		$result      = wp_remote_retrieve_body( $response );
 		$result      = json_decode( $result );
@@ -328,69 +390,77 @@ class WC_IDPay extends WC_Payment_Gateway {
 			$note .= __( 'An error occurred while verifying the transaction.', 'woo-idpay-gateway' );
 			$note .= '<br/>';
 			$note .= sprintf( __( 'error status: %s', 'woo-idpay-gateway' ), $http_status );
-			$order->add_order_note( $note );
 
 			if ( ! empty( $result->error_code ) && ! empty( $result->error_message ) ) {
-				$note = '';
+				$note .= '<br/>';
 				$note .= sprintf( __( 'error code: %s', 'woo-idpay-gateway' ), $result->error_code );
 				$note .= '<br/>';
 				$note .= sprintf( __( 'error message: %s', 'woo-idpay-gateway' ), $result->error_message );
-				$order->add_order_note( $note );
 
 				$notice = $result->error_message;
 				wc_add_notice( $notice, 'error' );
 			}
 
-			wp_redirect( $woocommerce->cart->get_checkout_url() );
-			exit;
-		}
-
-		$inquiry_status   = empty( $result->status ) ? NULL : $result->status;
-		$inquiry_track_id = empty( $result->track_id ) ? NULL : $result->track_id;
-		$inquiry_id       = empty( $result->id ) ? NULL : $result->id;
-		$inquiry_order_id = empty( $result->order_id ) ? NULL : $result->order_id;
-		$inquiry_amount   = empty( $result->amount ) ? NULL : $result->amount;
-		$inquiry_card_no  = empty( $result->card_no ) ? NULL : $result->card_no;
-		$inquiry_date     = empty( $result->date ) ? NULL : $result->date;
-
-		$status = ( $inquiry_status == 100 ) ? 'processing' : 'failed';
-
-		$note = sprintf( __( 'IDPay tracking id: %s', 'woo-idpay-gateway' ), $inquiry_track_id );
-		$order->add_order_note( $note );
-		update_post_meta( $order_id, 'idpay_track_id', $inquiry_track_id );
-
-		$note = sprintf( __( 'Transaction payment status: %s', 'woo-idpay-gateway' ), $inquiry_status );
-		$order->add_order_note( $note );
-		update_post_meta( $order_id, 'idpay_status', $inquiry_status );
-
-		$note = sprintf( __( 'Payer card number: %s', 'woo-idpay-gateway' ), $inquiry_card_no );
-		$order->add_order_note( $note );
-		update_post_meta( $order_id, 'idpay_card_no', $inquiry_card_no );
-
-		$currency = $order->get_order_currency();
-		$currency = apply_filters( 'WC_IDPay_Currency', $currency, $order_id );
-		$amount   = wc_idpay_get_amount( intval( $order->order_total ), $currency );
-
-		if ( empty( $inquiry_status ) || empty( $inquiry_track_id ) || empty( $inquiry_amount ) || $inquiry_amount != $amount ) {
-			$note = __( 'Error in transaction status or inconsistency with payment gateway information', 'woo-idpay-gateway' );
 			$order->add_order_note( $note );
-			$status = 'failed';
-		}
-
-		if ( $status == 'failed' ) {
-			$order->update_status( $status );
-			$this->idpay_display_failed_message( $order_id );
+			$order->update_status( 'failed' );
 
 			wp_redirect( $woocommerce->cart->get_checkout_url() );
-			exit;
-		} elseif ( $status == 'processing' ) {
-			$order->payment_complete( $inquiry_id );
-			$order->update_status( $status );
-			$woocommerce->cart->empty_cart();
-			$this->idpay_display_success_message( $order_id );
 
-			wp_redirect( add_query_arg( 'wc_status', 'success', $this->get_return_url( $order ) ) );
-			exit;
+			return FALSE;
+		} else {
+			$verify_status   = empty( $result->status ) ? NULL : $result->status;
+			$verify_track_id = empty( $result->track_id ) ? NULL : $result->track_id;
+			$verify_id       = empty( $result->id ) ? NULL : $result->id;
+			$verify_order_id = empty( $result->order_id ) ? NULL : $result->order_id;
+			$verify_amount   = empty( $result->amount ) ? NULL : $result->amount;
+			$verify_card_no  = empty( $result->payment->card_no ) ? NULL : $result->payment->card_no;
+			$verify_date     = empty( $result->payment->date ) ? NULL : $result->payment->date;
+
+			$status = ( $verify_status >= 100 ) ? 'processing' : 'failed';
+
+			$note = sprintf( __( 'Transaction payment status: %s', 'woo-idpay-gateway' ), $verify_status );
+			$note .= '<br/>';
+			$note .= sprintf( __( 'IDPay tracking id: %s', 'woo-idpay-gateway' ), $verify_track_id );
+			$note .= '<br/>';
+			$note .= sprintf( __( 'Payer card number: %s', 'woo-idpay-gateway' ), $verify_card_no );
+			$order->add_order_note( $note );
+
+			// Updates order's meta data after verifying the payment.
+			update_post_meta( $order_id, 'idpay_transaction_status', $verify_status );
+			update_post_meta( $order_id, 'idpay_track_id', $verify_track_id );
+			update_post_meta( $order_id, 'idpay_transaction_id', $verify_id );
+			update_post_meta( $order_id, 'idpay_transaction_order_id', $verify_order_id );
+			update_post_meta( $order_id, 'idpay_transaction_amount', $verify_amount );
+			update_post_meta( $order_id, 'idpay_payment_card_no', $verify_card_no );
+			update_post_meta( $order_id, 'idpay_payment_date', $verify_date );
+
+			$currency = $order->get_currency();
+			$currency = apply_filters( 'WC_IDPay_Currency', $currency, $order_id );
+			$amount   = wc_idpay_get_amount( intval( $order->get_total() ), $currency );
+
+			if ( empty( $verify_status ) || empty( $verify_track_id ) || empty( $verify_amount ) || $verify_amount != $amount ) {
+				$note = __( 'Error in transaction status or inconsistency with payment gateway information', 'woo-idpay-gateway' );
+				$order->add_order_note( $note );
+				$status = 'failed';
+			}
+
+			if ( $status == 'failed' ) {
+				$order->update_status( $status );
+				$this->idpay_display_failed_message( $order_id );
+
+				wp_redirect( $woocommerce->cart->get_checkout_url() );
+
+				return FALSE;
+			} elseif ( $status == 'processing' ) {
+				$order->payment_complete( $verify_id );
+				$order->update_status( $status );
+				$woocommerce->cart->empty_cart();
+				$this->idpay_display_success_message( $order_id );
+
+				wp_redirect( add_query_arg( 'wc_status', 'success', $this->get_return_url( $order ) ) );
+
+				return FALSE;
+			}
 		}
 	}
 
@@ -419,7 +489,7 @@ class WC_IDPay extends WC_Payment_Gateway {
 	private function idpay_display_success_message( $order_id ) {
 		$track_id = get_post_meta( $order_id, 'idpay_track_id', TRUE );
 
-		$notice = wpautop( wptexturize( $this->success_massage ) );
+		$notice = wpautop( wptexturize( $this->success_message ) );
 		$notice = str_replace( "{track_id}", $track_id, $notice );
 		$notice = str_replace( "{order_id}", $order_id, $notice );
 		wc_add_notice( $notice, 'success' );
@@ -437,9 +507,25 @@ class WC_IDPay extends WC_Payment_Gateway {
 	private function idpay_display_failed_message( $order_id ) {
 		$track_id = get_post_meta( $order_id, 'idpay_track_id', TRUE );
 
-		$notice = wpautop( wptexturize( $this->failed_massage ) );
+		$notice = wpautop( wptexturize( $this->failed_message ) );
 		$notice = str_replace( "{track_id}", $track_id, $notice );
 		$notice = str_replace( "{order_id}", $order_id, $notice );
 		wc_add_notice( $notice, 'error' );
+	}
+
+	/**
+	 * Checks if double-spending is occurred.
+	 *
+	 * @param $order_id
+	 * @param $remote_id
+	 *
+	 * @return bool
+	 */
+	private function double_spending_occurred( $order_id, $remote_id ) {
+		if ( get_post_meta( $order_id, 'idpay_transaction_id', TRUE ) != $remote_id ) {
+			return TRUE;
+		}
+
+		return FALSE;
 	}
 }

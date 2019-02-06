@@ -1,180 +1,34 @@
-# Copyright (C) 2018 IDPay payment gateway for Woocommerce
-# This file is distributed under the same license as the IDPay payment gateway for Woocommerce package.
+# Copyright (C) 2019 IDPay
+# This file is distributed under the same license as the IDPay payment gateway for Woocommerce plugin.
 msgid ""
 msgstr ""
-"Project-Id-Version: IDPay payment gateway for Woocommerce 1.0.4\n"
-"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/woo-idpay-"
-"gateway\n"
-"POT-Creation-Date: 2018-12-08 17:10:48+00:00\n"
+"Project-Id-Version: IDPay payment gateway for Woocommerce 2.0\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/woo-idpay-gateway\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"PO-Revision-Date: 2018-MO-DA HO:MI+ZONE\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: LANGUAGE <LL@li.org>\n"
+"POT-Creation-Date: 2019-02-06T09:31:18+00:00\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"X-Generator: WP-CLI 2.1.0\n"
+"X-Domain: woo-idpay-gateway\n"
 
-#: includes/class-wc-gateway-idpay.php:44
+#. Plugin Name of the plugin
+msgid "IDPay payment gateway for Woocommerce"
+msgstr ""
+
+#. Description of the plugin
+msgid "<a href=\"https://idpay.ir\">IDPay</a> secure payment gateway for Woocommerce."
+msgstr ""
+
+#. Author of the plugin
+#: includes/class-wc-gateway-idpay.php:58
 msgid "IDPay"
 msgstr ""
 
-#: includes/class-wc-gateway-idpay.php:45
-#: includes/class-wc-gateway-idpay.php:126
-msgid "Redirects customers to IDPay to process their payments."
-msgstr ""
-
-#: includes/class-wc-gateway-idpay.php:110
-msgid "Enable/Disable"
-msgstr ""
-
-#: includes/class-wc-gateway-idpay.php:117
-msgid "Title"
-msgstr ""
-
-#: includes/class-wc-gateway-idpay.php:119
-msgid ""
-"This gateway title will be shown when a customer is going to to checkout."
-msgstr ""
-
-#: includes/class-wc-gateway-idpay.php:120
-msgid "IDPay payment gateway"
-msgstr ""
-
-#: includes/class-wc-gateway-idpay.php:123
-msgid "Description"
-msgstr ""
-
-#: includes/class-wc-gateway-idpay.php:125
-msgid ""
-"This gateway description will be shown when a customer is going to to "
-"checkout."
-msgstr ""
-
-#: includes/class-wc-gateway-idpay.php:129
-msgid "Webservice Configuration"
-msgstr ""
-
-#: includes/class-wc-gateway-idpay.php:134
-msgid "API Key"
-msgstr ""
-
-#: includes/class-wc-gateway-idpay.php:136
-msgid ""
-"You can create an API Key by going to https://idpay.ir/dashboard/web-services"
-msgstr ""
-
-#: includes/class-wc-gateway-idpay.php:140
-msgid "Sandbox"
-msgstr ""
-
-#: includes/class-wc-gateway-idpay.php:141
-msgid "Enable sandbox mode"
-msgstr ""
-
-#: includes/class-wc-gateway-idpay.php:142
-msgid "If you check this option, the gateway works in test (sandbox) mode."
-msgstr ""
-
-#: includes/class-wc-gateway-idpay.php:147
-msgid "Payment message configuration"
-msgstr ""
-
-#: includes/class-wc-gateway-idpay.php:149
-msgid ""
-"Configure the messages which are displayed when a customer is brought back "
-"to the site from the gateway."
-msgstr ""
-
-#: includes/class-wc-gateway-idpay.php:152
-msgid "Success message"
-msgstr ""
-
-#: includes/class-wc-gateway-idpay.php:154
-msgid ""
-"Enter the message you want to display to the customer after a successful "
-"payment. You can also choose these placeholders {track_id}, {order_id} for "
-"showing the order id and the tracking id respectively."
-msgstr ""
-
-#: includes/class-wc-gateway-idpay.php:155
-msgid "Your payment has been successfully completed. Track id: {track_id}"
-msgstr ""
-
-#: includes/class-wc-gateway-idpay.php:158
-msgid "Failure message"
-msgstr ""
-
-#: includes/class-wc-gateway-idpay.php:160
-msgid ""
-"Enter the message you want to display to the customer after a failure "
-"occurred in a payment. You can also choose these placeholders {track_id}, "
-"{order_id} for showing the order id and the tracking id respectively."
-msgstr ""
-
-#: includes/class-wc-gateway-idpay.php:161
-msgid ""
-"Your payment has failed. Please try again or contact the site administrator "
-"in case of a problem."
-msgstr ""
-
-#: includes/class-wc-gateway-idpay.php:198
-msgid "Oder number #"
-msgstr ""
-
-#: includes/class-wc-gateway-idpay.php:202
-msgid "selected currency is not supported"
-msgstr ""
-
-#: includes/class-wc-gateway-idpay.php:235
-msgid "An error occurred while creating the transaction."
-msgstr ""
-
-#: includes/class-wc-gateway-idpay.php:237
-#: includes/class-wc-gateway-idpay.php:330
-msgid "error status: %s"
-msgstr ""
-
-#: includes/class-wc-gateway-idpay.php:242
-#: includes/class-wc-gateway-idpay.php:335
-msgid "error code: %s"
-msgstr ""
-
-#: includes/class-wc-gateway-idpay.php:244
-#: includes/class-wc-gateway-idpay.php:337
-msgid "error message: %s"
-msgstr ""
-
-#: includes/class-wc-gateway-idpay.php:257
-msgid "transaction id: %s"
-msgstr ""
-
-#: includes/class-wc-gateway-idpay.php:328
-msgid "An error occurred while verifying the transaction."
-msgstr ""
-
-#: includes/class-wc-gateway-idpay.php:358
-msgid "IDPay tracking id: %s"
-msgstr ""
-
-#: includes/class-wc-gateway-idpay.php:362
-msgid "Transaction payment status: %s"
-msgstr ""
-
-#: includes/class-wc-gateway-idpay.php:366
-msgid "Payer card number: %s"
-msgstr ""
-
-#: includes/class-wc-gateway-idpay.php:375
-msgid ""
-"Error in transaction status or inconsistency with payment gateway information"
-msgstr ""
-
-#: includes/class-wc-gateway-idpay.php:406
-msgid "There is no order number referenced."
-msgstr ""
-
-#: includes/class-wc-gateway-idpay.php:408
-msgid ""
-"Please try again or contact the site administrator in case of a problem."
+#. Author URI of the plugin
+msgid "https://idpay.ir"
 msgstr ""
 
 #: includes/wc-gateway-idpay-init.php:51
@@ -193,16 +47,146 @@ msgstr ""
 msgid "IRHT"
 msgstr ""
 
-#. Plugin Name of the plugin/theme
-msgid "IDPay payment gateway for Woocommerce"
+#: includes/class-wc-gateway-idpay.php:59
+#: includes/class-wc-gateway-idpay.php:143
+msgid "Redirects customers to IDPay to process their payments."
 msgstr ""
 
-#. Description of the plugin/theme
-msgid ""
-"<a href=\"https://idpay.ir\">IDPay</a> secure payment gateway for "
-"Woocommerce."
+#: includes/class-wc-gateway-idpay.php:127
+msgid "Enable/Disable"
 msgstr ""
 
-#. Author URI of the plugin/theme
-msgid "https://idpay.ir"
+#: includes/class-wc-gateway-idpay.php:134
+msgid "Title"
+msgstr ""
+
+#: includes/class-wc-gateway-idpay.php:136
+msgid "This gateway title will be shown when a customer is going to to checkout."
+msgstr ""
+
+#: includes/class-wc-gateway-idpay.php:137
+msgid "IDPay payment gateway"
+msgstr ""
+
+#: includes/class-wc-gateway-idpay.php:140
+msgid "Description"
+msgstr ""
+
+#: includes/class-wc-gateway-idpay.php:142
+msgid "This gateway description will be shown when a customer is going to to checkout."
+msgstr ""
+
+#: includes/class-wc-gateway-idpay.php:146
+msgid "Webservice Configuration"
+msgstr ""
+
+#: includes/class-wc-gateway-idpay.php:151
+msgid "API Key"
+msgstr ""
+
+#: includes/class-wc-gateway-idpay.php:153
+msgid "You can create an API Key by going to https://idpay.ir/dashboard/web-services"
+msgstr ""
+
+#: includes/class-wc-gateway-idpay.php:157
+msgid "Sandbox"
+msgstr ""
+
+#: includes/class-wc-gateway-idpay.php:158
+msgid "Enable sandbox mode"
+msgstr ""
+
+#: includes/class-wc-gateway-idpay.php:159
+msgid "If you check this option, the gateway works in test (sandbox) mode."
+msgstr ""
+
+#: includes/class-wc-gateway-idpay.php:164
+msgid "Payment message configuration"
+msgstr ""
+
+#: includes/class-wc-gateway-idpay.php:166
+msgid "Configure the messages which are displayed when a customer is brought back to the site from the gateway."
+msgstr ""
+
+#: includes/class-wc-gateway-idpay.php:169
+msgid "Success message"
+msgstr ""
+
+#: includes/class-wc-gateway-idpay.php:171
+msgid "Enter the message you want to display to the customer after a successful payment. You can also choose these placeholders {track_id}, {order_id} for showing the order id and the tracking id respectively."
+msgstr ""
+
+#: includes/class-wc-gateway-idpay.php:172
+msgid "Your payment has been successfully completed. Track id: {track_id}"
+msgstr ""
+
+#: includes/class-wc-gateway-idpay.php:175
+msgid "Failure message"
+msgstr ""
+
+#: includes/class-wc-gateway-idpay.php:177
+msgid "Enter the message you want to display to the customer after a failure occurred in a payment. You can also choose these placeholders {track_id}, {order_id} for showing the order id and the tracking id respectively."
+msgstr ""
+
+#: includes/class-wc-gateway-idpay.php:178
+msgid "Your payment has failed. Please try again or contact the site administrator in case of a problem."
+msgstr ""
+
+#: includes/class-wc-gateway-idpay.php:225
+msgid "Oder number #"
+msgstr ""
+
+#: includes/class-wc-gateway-idpay.php:229
+msgid "Selected currency is not supported"
+msgstr ""
+
+#: includes/class-wc-gateway-idpay.php:265
+msgid "An error occurred while creating the transaction."
+msgstr ""
+
+#: includes/class-wc-gateway-idpay.php:267
+#: includes/class-wc-gateway-idpay.php:392
+msgid "error status: %s"
+msgstr ""
+
+#: includes/class-wc-gateway-idpay.php:271
+#: includes/class-wc-gateway-idpay.php:396
+msgid "error code: %s"
+msgstr ""
+
+#: includes/class-wc-gateway-idpay.php:273
+#: includes/class-wc-gateway-idpay.php:398
+msgid "error message: %s"
+msgstr ""
+
+#: includes/class-wc-gateway-idpay.php:289
+msgid "transaction id: %s"
+msgstr ""
+
+#: includes/class-wc-gateway-idpay.php:390
+msgid "An error occurred while verifying the transaction."
+msgstr ""
+
+#: includes/class-wc-gateway-idpay.php:421
+msgid "Transaction payment status: %s"
+msgstr ""
+
+#: includes/class-wc-gateway-idpay.php:423
+msgid "IDPay tracking id: %s"
+msgstr ""
+
+#: includes/class-wc-gateway-idpay.php:425
+msgid "Payer card number: %s"
+msgstr ""
+
+#: includes/class-wc-gateway-idpay.php:442
+msgid "Error in transaction status or inconsistency with payment gateway information"
+msgstr ""
+
+#: includes/class-wc-gateway-idpay.php:474
+msgid "There is no order number referenced."
+msgstr ""
+
+#: includes/class-wc-gateway-idpay.php:476
+msgid "Please try again or contact the site administrator in case of a problem."
 msgstr ""

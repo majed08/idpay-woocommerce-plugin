@@ -283,7 +283,8 @@ class WC_IDPay extends WC_Payment_Gateway {
 		// Save ID of this transaction
 		update_post_meta( $order_id, 'idpay_transaction_id', $result->id );
 
-		update_post_meta( $order_id, 'idpay_transaction_status', 0 );
+		// Set remote status of the transaction to 1 as it's primary value.
+		update_post_meta( $order_id, 'idpay_transaction_status', 1 );
 
 		$note = sprintf( __( 'transaction id: %s', 'woo-idpay-gateway' ), $result->id );
 		$order->add_order_note( $note );

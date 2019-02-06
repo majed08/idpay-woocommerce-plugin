@@ -26,14 +26,14 @@ class WC_IDPay extends WC_Payment_Gateway {
 	 *
 	 * @var string
 	 */
-	protected $success_massage;
+	protected $success_message;
 
 	/**
 	 * The payment failure message.
 	 *
 	 * @var string
 	 */
-	protected $failed_massage;
+	protected $failed_message;
 
 	/**
 	 * The payment endpoint
@@ -76,8 +76,8 @@ class WC_IDPay extends WC_Payment_Gateway {
 		$this->payment_endpoint = 'https://test.idpay.ir/v1.1/payment';
 		$this->verify_endpoint  = 'https://test.idpay.ir/v1.1/payment/verify';
 
-		$this->success_massage = $this->get_option( 'success_massage' );
-		$this->failed_massage  = $this->get_option( 'failed_massage' );
+		$this->success_message = $this->get_option( 'success_message' );
+		$this->failed_message  = $this->get_option( 'failed_message' );
 
 		if ( version_compare( WOOCOMMERCE_VERSION, '2.0.0', '>=' ) ) {
 			add_action( 'woocommerce_update_options_payment_gateways_' . $this->id, array(
@@ -165,13 +165,13 @@ class WC_IDPay extends WC_Payment_Gateway {
 				'type'        => 'title',
 				'description' => __( 'Configure the messages which are displayed when a customer is brought back to the site from the gateway.', 'woo-idpay-gateway' ),
 			),
-			'success_massage'   => array(
+			'success_message'   => array(
 				'title'       => __( 'Success message', 'woo-idpay-gateway' ),
 				'type'        => 'textarea',
 				'description' => __( 'Enter the message you want to display to the customer after a successful payment. You can also choose these placeholders {track_id}, {order_id} for showing the order id and the tracking id respectively.', 'woo-idpay-gateway' ),
 				'default'     => __( 'Your payment has been successfully completed. Track id: {track_id}', 'woo-idpay-gateway' ),
 			),
-			'failed_massage'    => array(
+			'failed_message'    => array(
 				'title'       => __( 'Failure message', 'woo-idpay-gateway' ),
 				'type'        => 'textarea',
 				'description' => __( 'Enter the message you want to display to the customer after a failure occurred in a payment. You can also choose these placeholders {track_id}, {order_id} for showing the order id and the tracking id respectively.', 'woo-idpay-gateway' ),
@@ -482,7 +482,7 @@ class WC_IDPay extends WC_Payment_Gateway {
 	private function idpay_display_success_message( $order_id ) {
 		$track_id = get_post_meta( $order_id, 'idpay_track_id', TRUE );
 
-		$notice = wpautop( wptexturize( $this->success_massage ) );
+		$notice = wpautop( wptexturize( $this->success_message ) );
 		$notice = str_replace( "{track_id}", $track_id, $notice );
 		$notice = str_replace( "{order_id}", $order_id, $notice );
 		wc_add_notice( $notice, 'success' );
@@ -500,7 +500,7 @@ class WC_IDPay extends WC_Payment_Gateway {
 	private function idpay_display_failed_message( $order_id ) {
 		$track_id = get_post_meta( $order_id, 'idpay_track_id', TRUE );
 
-		$notice = wpautop( wptexturize( $this->failed_massage ) );
+		$notice = wpautop( wptexturize( $this->failed_message ) );
 		$notice = str_replace( "{track_id}", $track_id, $notice );
 		$notice = str_replace( "{order_id}", $order_id, $notice );
 		wc_add_notice( $notice, 'error' );

@@ -362,14 +362,14 @@ function wc_gateway_idpay_init() {
 			public function idpay_checkout_return_handler() {
 				global $woocommerce;
 
-				$status         = empty( $_POST['status'] ) ? NULL : $_POST['status'];
-				$track_id       = empty( $_POST['track_id'] ) ? NULL : $_POST['track_id'];
-				$id             = empty( $_POST['id'] ) ? NULL : $_POST['id'];
-				$order_id       = empty( $_POST['order_id'] ) ? NULL : $_POST['order_id'];
-				$amount         = empty( $_POST['amount'] ) ? NULL : $_POST['amount'];
-				$card_no        = empty( $_POST['card_no'] ) ? NULL : $_POST['card_no'];
-				$date           = empty( $_POST['date'] ) ? NULL : $_POST['date'];
-				$hashed_card_no = empty( $_POST['hashed_card_no'] ) ? NULL : $_POST['hashed_card_no'];
+				$status         = sanitize_text_field( $_POST['status'] );
+				$track_id       = sanitize_text_field( $_POST['track_id'] );
+				$id             = sanitize_text_field( $_POST['id'] );
+				$order_id       = sanitize_text_field( $_POST['order_id'] );
+				$amount         = sanitize_text_field( $_POST['amount'] );
+				$card_no        = sanitize_text_field( $_POST['card_no'] );
+				$date           = sanitize_text_field( $_POST['date'] );
+				$hashed_card_no = sanitize_text_field( $_POST['hashed_card_no'] );
 
 				if ( empty( $id ) || empty( $order_id ) ) {
 					$this->idpay_display_invalid_order_message();

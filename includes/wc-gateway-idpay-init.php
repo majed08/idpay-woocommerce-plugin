@@ -309,11 +309,17 @@ function wc_gateway_idpay_init() {
 				$args = array(
 					'body'    => json_encode( $data ),
 					'headers' => $headers,
-					'timeout' => 30,
+					'timeout' => 15,
 				);
 
 
-				$response    = wp_safe_remote_post( $this->payment_endpoint, $args );
+				$response = $this->call_gateway_endpoint( $this->payment_endpoint, $args );
+				if ( is_wp_error( $response ) ) {
+					$note = $response->get_error_message();
+					$order->add_order_note( $note );
+
+					return FALSE;
+				}
 				$http_status = wp_remote_retrieve_response_code( $response );
 				$result      = wp_remote_retrieve_body( $response );
 				$result      = json_decode( $result );
@@ -435,10 +441,17 @@ function wc_gateway_idpay_init() {
 				$args = array(
 					'body'    => json_encode( $data ),
 					'headers' => $headers,
-					'timeout' => 30,
+					'timeout' => 15,
 				);
 
-				$response    = wp_safe_remote_post( $this->verify_endpoint, $args );
+				$response = $this->call_gateway_endpoint( $this->verify_endpoint, $args );
+				if ( is_wp_error( $response ) ) {
+					$note = $response->get_error_message();
+					$order->add_order_note( $note );
+
+					return FALSE;
+				}
+
 				$http_status = wp_remote_retrieve_response_code( $response );
 				$result      = wp_remote_retrieve_body( $response );
 				$result      = json_decode( $result );
@@ -551,6 +564,31 @@ function wc_gateway_idpay_init() {
 				$notice = str_replace( "{track_id}", $track_id, $notice );
 				$notice = str_replace( "{order_id}", $order_id, $notice );
 				wc_add_notice( $notice, 'success' );
+			}
+
+			/**
+			 * Calls the gateway endpoints.
+			 *
+			 * Tries to get response from the gateway for 4 times.
+			 *
+			 * @param $url
+			 * @param $args
+			 *
+			 * @return array|\WP_Error
+			 */
+			private function call_gateway_endpoint( $url, $args ) {
+				$number_of_connection_tries = 4;
+				while ( $number_of_connection_tries ) {
+					$response = wp_safe_remote_post( $url, $args );
+					if ( is_wp_error( $response ) ) {
+						$number_of_connection_tries --;
+						continue;
+					} else {
+						break;
+					}
+				}
+
+				return $response;
 			}
 
 			/**

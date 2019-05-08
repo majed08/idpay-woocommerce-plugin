@@ -362,13 +362,14 @@ function wc_gateway_idpay_init() {
 			public function idpay_checkout_return_handler() {
 				global $woocommerce;
 
-				$status   = empty( $_POST['status'] ) ? NULL : $_POST['status'];
-				$track_id = empty( $_POST['track_id'] ) ? NULL : $_POST['track_id'];
-				$id       = empty( $_POST['id'] ) ? NULL : $_POST['id'];
-				$order_id = empty( $_POST['order_id'] ) ? NULL : $_POST['order_id'];
-				$amount   = empty( $_POST['amount'] ) ? NULL : $_POST['amount'];
-				$card_no  = empty( $_POST['card_no'] ) ? NULL : $_POST['card_no'];
-				$date     = empty( $_POST['date'] ) ? NULL : $_POST['date'];
+				$status         = empty( $_POST['status'] ) ? NULL : $_POST['status'];
+				$track_id       = empty( $_POST['track_id'] ) ? NULL : $_POST['track_id'];
+				$id             = empty( $_POST['id'] ) ? NULL : $_POST['id'];
+				$order_id       = empty( $_POST['order_id'] ) ? NULL : $_POST['order_id'];
+				$amount         = empty( $_POST['amount'] ) ? NULL : $_POST['amount'];
+				$card_no        = empty( $_POST['card_no'] ) ? NULL : $_POST['card_no'];
+				$date           = empty( $_POST['date'] ) ? NULL : $_POST['date'];
+				$hashed_card_no = empty( $_POST['hashed_card_no'] ) ? NULL : $_POST['hashed_card_no'];
 
 				if ( empty( $id ) || empty( $order_id ) ) {
 					$this->idpay_display_invalid_order_message();
@@ -479,13 +480,14 @@ function wc_gateway_idpay_init() {
 
 					return FALSE;
 				} else {
-					$verify_status   = empty( $result->status ) ? NULL : $result->status;
-					$verify_track_id = empty( $result->track_id ) ? NULL : $result->track_id;
-					$verify_id       = empty( $result->id ) ? NULL : $result->id;
-					$verify_order_id = empty( $result->order_id ) ? NULL : $result->order_id;
-					$verify_amount   = empty( $result->amount ) ? NULL : $result->amount;
-					$verify_card_no  = empty( $result->payment->card_no ) ? NULL : $result->payment->card_no;
-					$verify_date     = empty( $result->payment->date ) ? NULL : $result->payment->date;
+					$verify_status         = empty( $result->status ) ? NULL : $result->status;
+					$verify_track_id       = empty( $result->track_id ) ? NULL : $result->track_id;
+					$verify_id             = empty( $result->id ) ? NULL : $result->id;
+					$verify_order_id       = empty( $result->order_id ) ? NULL : $result->order_id;
+					$verify_amount         = empty( $result->amount ) ? NULL : $result->amount;
+					$verify_card_no        = empty( $result->payment->card_no ) ? NULL : $result->payment->card_no;
+					$verify_hashed_card_no = empty( $result->payment->hashed_card_no ) ? NULL : $result->payment->hashed_card_no;
+					$verify_date           = empty( $result->payment->date ) ? NULL : $result->payment->date;
 
 					$status = ( $verify_status >= 100 ) ? 'processing' : 'failed';
 
@@ -503,6 +505,7 @@ function wc_gateway_idpay_init() {
 					update_post_meta( $order_id, 'idpay_transaction_order_id', $verify_order_id );
 					update_post_meta( $order_id, 'idpay_transaction_amount', $verify_amount );
 					update_post_meta( $order_id, 'idpay_payment_card_no', $verify_card_no );
+					update_post_meta( $order_id, 'idpay_payment_hashed_card_no', $verify_hashed_card_no );
 					update_post_meta( $order_id, 'idpay_payment_date', $verify_date );
 
 					$currency = $order->get_currency();

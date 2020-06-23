@@ -339,7 +339,6 @@ function wc_gateway_idpay_init()
                 $result = wp_remote_retrieve_body($response);
                 $result = json_decode($result);
 
-
                 if ($http_status != 201 || empty($result) || empty($result->id) || empty($result->link)) {
                     $note = '';
                     $note .= __('An error occurred while creating the transaction.', 'woo-idpay-gateway');
@@ -369,10 +368,7 @@ function wc_gateway_idpay_init()
 
                 $note = sprintf(__('transaction id: %s', 'woo-idpay-gateway'), $result->id);
                 $order->add_order_note($note);
-
                 wp_redirect($result->link);
-
-
                 return FALSE;
 
             }
@@ -402,14 +398,12 @@ function wc_gateway_idpay_init()
 
                 $order = wc_get_order($order_id);
 
-
                 if (empty($order)) {
                     $this->idpay_display_invalid_order_message();
                     wp_redirect($woocommerce->cart->get_checkout_url());
 
                     return FALSE;
                 }
-
 
                 if ($order->get_status() == 'completed' || $order->get_status() == 'processing') {
                     $this->idpay_display_success_message($order_id);
@@ -467,21 +461,12 @@ function wc_gateway_idpay_init()
                     $note = $response->get_error_message();
                     $order->add_order_note($note);
                     wp_redirect($woocommerce->cart->get_checkout_url());
-
                     return FALSE;
                 }
-
-
-
 
                 $http_status = wp_remote_retrieve_response_code($response);
                 $result = wp_remote_retrieve_body($response);
                 $result = json_decode($result);
-
-
-
-
-
 
                 if ($http_status != 200) {
                     $note = '';
@@ -494,24 +479,21 @@ function wc_gateway_idpay_init()
                         $note .= sprintf(__('error code: %s', 'woo-idpay-gateway'), $result->error_code);
                         $note .= '<br/>';
                         $note .= sprintf(__('error message: %s', 'woo-idpay-gateway'), $result->error_message);
-
                         $notice = $result->error_message;
                         wc_add_notice($notice, 'error');
                     }
 
                     $order->add_order_note($note);
                     $order->update_status('failed');
-
                     wp_redirect($woocommerce->cart->get_checkout_url());
-
                     return FALSE;
                 } else {
+
 
                     //check Double Spending
                     if ($this->double_spending_occurred($order_id, $id) or get_post_meta($order_id, 'idpay_transaction_id', True) !== $result->id) {
                         $this->idpay_display_failed_message($order_id, 0);
                         wp_redirect($woocommerce->cart->get_checkout_url());
-
                         return FALSE;
                     }
 
@@ -525,13 +507,12 @@ function wc_gateway_idpay_init()
                     $verify_hashed_card_no = empty($result->payment->hashed_card_no) ? NULL : $result->payment->hashed_card_no;
                     $verify_date = empty($result->payment->date) ? NULL : $result->payment->date;
 
+                    //check type of product for definition order status
                     $has_downloadable = $order->has_downloadable_item();
                     $status_helper = ($has_downloadable) ? 'completed' : 'processing';
                     $status = ($verify_status >= 100) ? $status_helper : 'failed';
 
-
                     //completed
-
                     $note = sprintf(__('Transaction payment status: %s', 'woo-idpay-gateway'), $verify_status);
                     $note .= '<br/>';
                     $note .= sprintf(__('IDPay tracking id: %s', 'woo-idpay-gateway'), $verify_track_id);
@@ -539,8 +520,6 @@ function wc_gateway_idpay_init()
                     $note .= sprintf(__('Payer card number: %s', 'woo-idpay-gateway'), $verify_card_no);
                     $note .= '<br/>';
                     $note .= sprintf(__('Payer hashed card number: %s', 'woo-idpay-gateway'), $verify_hashed_card_no);
-
-
                     $order->add_order_note($note);
 
                     // Updates order's meta data after verifying the payment.
@@ -576,7 +555,6 @@ function wc_gateway_idpay_init()
                         $woocommerce->cart->empty_cart();
                         $this->idpay_display_success_message($order_id);
                         wp_redirect(add_query_arg('wc_status', 'success', $this->get_return_url($order)));
-
                         return FALSE;
                     }
                 }
@@ -729,14 +707,6 @@ function wc_gateway_idpay_init()
                         break;
                     case "404":
                         $msg = "واحد پول انتخاب شده پشتیبانی نمی شود.";
-                        $msgNumber = '404';
-                        break;
-                    case "405":
-                        $msg = "کاربر از انجام تراکنش منصرف شده است.";
-                        $msgNumber = '404';
-                        break;
-                    case "1000":
-                        $msg = "خطا دور از انتظار";
                         $msgNumber = '404';
                         break;
                     case null:

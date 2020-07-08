@@ -1,7 +1,7 @@
 === IDPay Payment Gateway for Woocommerce ===
-Contributors: majidlotfinia, jazaali, imikiani
+Contributors: majidlotfinia, jazaali, imikiani, vispa, mnbp1371
 Tags: woocommerce, payment, idpay, gateway, آیدی پی
-Stable tag: 2.0.2
+Stable tag: 2.1.0
 Tested up to: 5.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -31,6 +31,12 @@ Also there is a complete documentation [here](https://blog.idpay.ir/helps/99) wh
 Thank you so much for using IDPay Payment Gateway.
 
 == Changelog ==
+
+= 2.1.0, Jul 08, 2020 =
+* Improved double spending checking.
+* Compelete downloadable orders after payment.
+* Improved record logs.
+* Improved display messages of payment status.
 
 = 2.0.2, May 08, 2019 =
 * Reorganize files.

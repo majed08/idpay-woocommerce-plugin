@@ -179,6 +179,11 @@ msgstr ""
 msgid "Payer card number: %s"
 msgstr ""
 
+
+#: includes/wc-gateway-idpay-init.php:498
+msgid "Payer hashed card number: %s"
+msgstr ""
+
 #: includes/wc-gateway-idpay-init.php:516
 msgid "Error in transaction status or inconsistency with payment gateway information"
 msgstr ""

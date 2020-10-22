@@ -380,13 +380,20 @@ function wc_gateway_idpay_init()
             {
                 global $woocommerce;
 
-                $status = sanitize_text_field($_POST['status']);
-                $track_id = sanitize_text_field($_POST['track_id']);
-                $id = sanitize_text_field($_POST['id']);
-                $order_id = sanitize_text_field($_POST['order_id']);
-                $amount = sanitize_text_field($_POST['amount']);
-                $card_no = sanitize_text_field($_POST['card_no']);
-                $date = sanitize_text_field($_POST['date']);
+                // Check method post or get
+                $method = $_SERVER['REQUEST_METHOD'];
+                if ($method == 'POST') {
+                    $status = sanitize_text_field($_POST['status']);
+                    $track_id = sanitize_text_field($_POST['track_id']);
+                    $id = sanitize_text_field($_POST['id']);
+                    $order_id = sanitize_text_field($_POST['order_id']);
+                }
+                elseif ($method == 'GET') {
+                    $status = sanitize_text_field($_GET['status']);
+                    $track_id = sanitize_text_field($_GET['track_id']);
+                    $id = sanitize_text_field($_GET['id']);
+                    $order_id = sanitize_text_field($_GET['order_id']);
+                }
 
                 if (empty($id) || empty($order_id)) {
                     $this->idpay_display_invalid_order_message();
@@ -424,9 +431,6 @@ function wc_gateway_idpay_init()
                 update_post_meta($order_id, 'idpay_track_id', $track_id);
                 update_post_meta($order_id, 'idpay_transaction_id', $id);
                 update_post_meta($order_id, 'idpay_transaction_order_id', $order_id);
-                update_post_meta($order_id, 'idpay_transaction_amount', $amount);
-                update_post_meta($order_id, 'idpay_payment_card_no', $card_no);
-                update_post_meta($order_id, 'idpay_payment_date', $date);
 
                 if ($status != 10) {
                     $order->update_status('failed');
@@ -675,7 +679,7 @@ function wc_gateway_idpay_init()
                     case "3":
                         $msg = "خطا رخ داده است";
                         break;
-                    case "3":
+                    case "4":
                         $msg = "بلوکه شده";
                         break;
                     case "5":

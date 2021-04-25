@@ -299,7 +299,7 @@ function wc_gateway_idpay_init()
                     wc_add_notice($notice, 'error');
                     wp_redirect($woocommerce->cart->get_checkout_url());
 
-                    exit();
+                    exit;
                 }
 
                 $data = array(
@@ -330,7 +330,7 @@ function wc_gateway_idpay_init()
                     $order->add_order_note($note);
                     wp_redirect($woocommerce->cart->get_checkout_url());
 
-                    exit();
+                    exit;
                 }
 
                 $http_status = wp_remote_retrieve_response_code($response);
@@ -355,7 +355,7 @@ function wc_gateway_idpay_init()
 
                     wp_redirect($woocommerce->cart->get_checkout_url());
 
-                    exit();
+                    exit;
                 }
 
                 // Save ID of this transaction
@@ -368,7 +368,7 @@ function wc_gateway_idpay_init()
                 $order->add_order_note($note);
                 wp_redirect($result->link);
 
-                exit();
+                exit;
             }
 
             /**
@@ -397,7 +397,7 @@ function wc_gateway_idpay_init()
                     $this->idpay_display_invalid_order_message();
                     wp_redirect($woocommerce->cart->get_checkout_url());
 
-                    exit();
+                    exit;
                 }
 
 
@@ -407,21 +407,21 @@ function wc_gateway_idpay_init()
                     $this->idpay_display_invalid_order_message();
                     wp_redirect($woocommerce->cart->get_checkout_url());
 
-                    exit();
+                    exit;
                 }
 
                 if ($order->get_status() == 'completed' || $order->get_status() == 'processing') {
                     $this->idpay_display_success_message($order_id);
                     wp_redirect(add_query_arg('wc_status', 'success', $this->get_return_url($order)));
 
-                    exit();
+                    exit;
                 }
 
                 if (get_post_meta($order_id, 'idpay_transaction_status', TRUE) >= 100) {
                     $this->idpay_display_success_message($order_id);
                     wp_redirect(add_query_arg('wc_status', 'success', $this->get_return_url($order)));
 
-                    exit();
+                    exit;
                 }
 
                 // Stores order's meta data.
@@ -436,7 +436,7 @@ function wc_gateway_idpay_init()
                     $order->add_order_note($this->otherStatusMessages($status));
                     wp_redirect($woocommerce->cart->get_checkout_url());
 
-                    exit();
+                    exit;
                 }
 
                 $api_key = $this->api_key;
@@ -465,7 +465,7 @@ function wc_gateway_idpay_init()
                     $order->add_order_note($note);
                     wp_redirect($woocommerce->cart->get_checkout_url());
 
-                    exit();
+                    exit;
                 }
 
                 $http_status = wp_remote_retrieve_response_code($response);
@@ -491,7 +491,7 @@ function wc_gateway_idpay_init()
                     $order->update_status('failed');
                     wp_redirect($woocommerce->cart->get_checkout_url());
 
-                    exit();
+                    exit;
                 } else {
 
                     //check Double Spending
@@ -499,7 +499,7 @@ function wc_gateway_idpay_init()
                         $this->idpay_display_failed_message($order_id, 0);
                         wp_redirect($woocommerce->cart->get_checkout_url());
 
-                        exit();
+                        exit;
                     }
 
                     $verify_status = empty($result->status) ? NULL : $result->status;
@@ -550,7 +550,7 @@ function wc_gateway_idpay_init()
 
                         wp_redirect($woocommerce->cart->get_checkout_url());
 
-                        exit();
+                        exit;
                     } elseif ($status == 'processing' or $status == 'completed') {
 
                         $order->payment_complete($verify_id);
@@ -559,7 +559,7 @@ function wc_gateway_idpay_init()
                         $this->idpay_display_success_message($order_id);
                         wp_redirect(add_query_arg('wc_status', 'success', $this->get_return_url($order)));
 
-                        exit();
+                        exit;
                     }
                 }
             }

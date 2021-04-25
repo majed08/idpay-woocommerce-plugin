@@ -32,7 +32,7 @@ Thank you so much for using IDPay Payment Gateway.
 
 == Changelog ==
 
-= 2.1.2, April 13, 2021 =
+= 2.1.2, April 25, 2021 =
 * Change orders status.
 * Fix bug.
 

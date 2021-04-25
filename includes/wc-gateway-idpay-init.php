@@ -299,8 +299,7 @@ function wc_gateway_idpay_init()
                     wc_add_notice($notice, 'error');
                     wp_redirect($woocommerce->cart->get_checkout_url());
 
-                    return FALSE;
-
+                    exit();
                 }
 
                 $data = array(
@@ -325,16 +324,15 @@ function wc_gateway_idpay_init()
                     'timeout' => 15,
                 );
 
-
                 $response = $this->call_gateway_endpoint($this->payment_endpoint, $args);
                 if (is_wp_error($response)) {
                     $note = $response->get_error_message();
                     $order->add_order_note($note);
                     wp_redirect($woocommerce->cart->get_checkout_url());
 
-                    return FALSE;
-
+                    exit();
                 }
+
                 $http_status = wp_remote_retrieve_response_code($response);
                 $result = wp_remote_retrieve_body($response);
                 $result = json_decode($result);
@@ -356,8 +354,8 @@ function wc_gateway_idpay_init()
                     }
 
                     wp_redirect($woocommerce->cart->get_checkout_url());
-                    return FALSE;
 
+                    exit();
                 }
 
                 // Save ID of this transaction
@@ -369,8 +367,8 @@ function wc_gateway_idpay_init()
                 $note = sprintf(__('transaction id: %s', 'woo-idpay-gateway'), $result->id);
                 $order->add_order_note($note);
                 wp_redirect($result->link);
-                return FALSE;
 
+                exit();
             }
 
             /**
@@ -399,7 +397,7 @@ function wc_gateway_idpay_init()
                     $this->idpay_display_invalid_order_message();
                     wp_redirect($woocommerce->cart->get_checkout_url());
 
-                    return FALSE;
+                    exit();
                 }
 
 
@@ -409,21 +407,21 @@ function wc_gateway_idpay_init()
                     $this->idpay_display_invalid_order_message();
                     wp_redirect($woocommerce->cart->get_checkout_url());
 
-                    return FALSE;
+                    exit();
                 }
 
                 if ($order->get_status() == 'completed' || $order->get_status() == 'processing') {
                     $this->idpay_display_success_message($order_id);
                     wp_redirect(add_query_arg('wc_status', 'success', $this->get_return_url($order)));
 
-                    return FALSE;
+                    exit();
                 }
 
                 if (get_post_meta($order_id, 'idpay_transaction_status', TRUE) >= 100) {
                     $this->idpay_display_success_message($order_id);
                     wp_redirect(add_query_arg('wc_status', 'success', $this->get_return_url($order)));
 
-                    return FALSE;
+                    exit();
                 }
 
                 // Stores order's meta data.
@@ -437,7 +435,8 @@ function wc_gateway_idpay_init()
                     $this->idpay_display_failed_message($order_id, $status);
                     $order->add_order_note($this->otherStatusMessages($status));
                     wp_redirect($woocommerce->cart->get_checkout_url());
-                    return FALSE;
+
+                    exit();
                 }
 
                 $api_key = $this->api_key;
@@ -465,7 +464,8 @@ function wc_gateway_idpay_init()
                     $note = $response->get_error_message();
                     $order->add_order_note($note);
                     wp_redirect($woocommerce->cart->get_checkout_url());
-                    return FALSE;
+
+                    exit();
                 }
 
                 $http_status = wp_remote_retrieve_response_code($response);
@@ -490,17 +490,17 @@ function wc_gateway_idpay_init()
                     $order->add_order_note($note);
                     $order->update_status('failed');
                     wp_redirect($woocommerce->cart->get_checkout_url());
-                    return FALSE;
-                } else {
 
+                    exit();
+                } else {
 
                     //check Double Spending
                     if ($this->double_spending_occurred($order_id, $id) or get_post_meta($order_id, 'idpay_transaction_id', True) !== $result->id) {
                         $this->idpay_display_failed_message($order_id, 0);
                         wp_redirect($woocommerce->cart->get_checkout_url());
-                        return FALSE;
-                    }
 
+                        exit();
+                    }
 
                     $verify_status = empty($result->status) ? NULL : $result->status;
                     $verify_track_id = empty($result->track_id) ? NULL : $result->track_id;
@@ -512,8 +512,7 @@ function wc_gateway_idpay_init()
                     $verify_date = empty($result->payment->date) ? NULL : $result->payment->date;
 
                     //check type of product for definition order status
-                    $has_downloadable = $order->has_downloadable_item();
-                    $status_helper = ($has_downloadable) ? 'completed' : 'processing';
+                    $status_helper = ($this->checkDownloadableItem($order)) ? 'completed' : 'processing';
                     $status = ($verify_status >= 100) ? $status_helper : 'failed';
 
                     //completed
@@ -551,7 +550,7 @@ function wc_gateway_idpay_init()
 
                         wp_redirect($woocommerce->cart->get_checkout_url());
 
-                        return FALSE;
+                        exit();
                     } elseif ($status == 'processing' or $status == 'completed') {
 
                         $order->payment_complete($verify_id);
@@ -559,7 +558,8 @@ function wc_gateway_idpay_init()
                         $woocommerce->cart->empty_cart();
                         $this->idpay_display_success_message($order_id);
                         wp_redirect(add_query_arg('wc_status', 'success', $this->get_return_url($order)));
-                        return FALSE;
+
+                        exit();
                     }
                 }
             }
@@ -719,11 +719,25 @@ function wc_gateway_idpay_init()
                         break;
                 }
 
-                return $msg . ' -وضعیت: ' . "$msgNumber";
+                return $msg . ' -وضعیت: ' . $msgNumber;
 
             }
 
-
+            /**
+             * @param $order
+             * @return bool
+             */
+            public function checkDownloadableItem($order) {
+              foreach ( $order->get_items() as $item ) {
+                if ( $item->is_type( 'line_item' ) ) {
+                  $product = $item->get_product();
+                  if ( $product && ($product->is_downloadable()) || $product->has_file() ) {
+                    return true;
+                  }
+                }
+              }
+              return false;
+            }
         }
 
     }

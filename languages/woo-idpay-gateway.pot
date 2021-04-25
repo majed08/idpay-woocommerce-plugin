@@ -1,4 +1,4 @@
-# Copyright (C) 2019 IDPay
+# Copyright (C) 2021 IDPay
 # This file is distributed under the same license as the IDPay payment gateway for Woocommerce plugin.
 msgid ""
 msgstr ""

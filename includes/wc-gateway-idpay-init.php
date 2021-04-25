@@ -731,7 +731,7 @@ function wc_gateway_idpay_init()
               foreach ( $order->get_items() as $item ) {
                 if ( $item->is_type( 'line_item' ) ) {
                   $product = $item->get_product();
-                  if ( $product && ($product->is_downloadable()) || $product->has_file() ) {
+                  if ( $product && ($product->is_downloadable() || $product->has_file()) ) {
                     return true;
                   }
                 }

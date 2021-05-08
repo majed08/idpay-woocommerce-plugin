@@ -8,6 +8,9 @@
  * Author Email: info@idpay.ir
  * Text Domain: woo-idpay-gateway
  * Domain Path: /languages/
+ *
+ * WC requires at least: 3.0
+ * WC tested up to: 5.2
  */
 
 if ( ! defined( 'ABSPATH' ) ) {

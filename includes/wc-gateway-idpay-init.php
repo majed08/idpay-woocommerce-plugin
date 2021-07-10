@@ -321,7 +321,7 @@ function wc_gateway_idpay_init()
                 $args = array(
                     'body' => json_encode($data),
                     'headers' => $headers,
-                    'timeout' => 15,
+                    'timeout' => 30,
                 );
 
                 $response = $this->call_gateway_endpoint($this->payment_endpoint, $args);
@@ -439,6 +439,16 @@ function wc_gateway_idpay_init()
                     exit;
                 }
 
+                //check Double Spending
+                if ($this->double_spending_occurred($order_id, $id) or get_post_meta($order_id, 'idpay_transaction_id', True) !== $id) {
+                   $this->idpay_display_failed_message($order_id, 0);
+                   $note = $this->otherStatusMessages(0);
+                   $order->add_order_note($note);
+                   wp_redirect($woocommerce->cart->get_checkout_url());
+
+                   exit;
+                }
+
                 $api_key = $this->api_key;
                 $sandbox = $this->sandbox == 'no' ? 'false' : 'true';
 
@@ -456,7 +466,7 @@ function wc_gateway_idpay_init()
                 $args = array(
                     'body' => json_encode($data),
                     'headers' => $headers,
-                    'timeout' => 15,
+                    'timeout' => 30,
                 );
 
                 $response = $this->call_gateway_endpoint($this->verify_endpoint, $args);
@@ -493,14 +503,6 @@ function wc_gateway_idpay_init()
 
                     exit;
                 } else {
-
-                    //check Double Spending
-                    if ($this->double_spending_occurred($order_id, $id) or get_post_meta($order_id, 'idpay_transaction_id', True) !== $result->id) {
-                        $this->idpay_display_failed_message($order_id, 0);
-                        wp_redirect($woocommerce->cart->get_checkout_url());
-
-                        exit;
-                    }
 
                     $verify_status = empty($result->status) ? NULL : $result->status;
                     $verify_track_id = empty($result->track_id) ? NULL : $result->track_id;

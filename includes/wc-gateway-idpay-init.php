@@ -440,7 +440,7 @@ function wc_gateway_idpay_init()
                 }
 
                 //check Double Spending
-                if ($this->double_spending_occurred($order_id, $id) or get_post_meta($order_id, 'idpay_transaction_id', True) !== $id) {
+                if ($this->double_spending_occurred($order_id, $id) or get_post_meta($order_id, 'idpay_transaction_id', TRUE) !== $id) {
                    $this->idpay_display_failed_message($order_id, 0);
                    $note = $this->otherStatusMessages(0);
                    $order->add_order_note($note);

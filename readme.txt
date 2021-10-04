@@ -2,7 +2,7 @@
 Contributors: majidlotfinia, jazaali, imikiani, vispa, mnbp1371
 Tags: woocommerce, payment, idpay, gateway, آیدی پی
 Stable tag: 2.1.3
-Tested up to: 5.7
+Tested up to: 5.8
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -32,7 +32,7 @@ Thank you so much for using IDPay Payment Gateway.
 
 == Changelog ==
 
-= 2.1.3, May 8, 2021 =
+= 2.1.3, October 4, 2021 =
 * Updated plugin info.
 * Set timeout.
 

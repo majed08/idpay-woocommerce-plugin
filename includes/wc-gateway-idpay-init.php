@@ -241,7 +241,7 @@ function wc_gateway_idpay_init()
                         'label' => __('Choose order status', 'woo-idpay-gateway'),
                         'description' => __('You can choose order status after payment.', 'woo-idpay-gateway'),
                         'type' => 'select',
-                        'options' => $this->villid_order_statuses(),
+                        'options' => $this->valid_order_statuses(),
                     ),
                     'message_confing' => array(
                         'title' => __('Payment message configuration', 'woo-idpay-gateway'),
@@ -530,7 +530,7 @@ function wc_gateway_idpay_init()
                     $verify_date = empty($result->payment->date) ? NULL : $result->payment->date;
 
                     // Check status
-                    $status_helper = !empty($this->villid_order_statuses()[$this->order_status]) ? $this->order_status : 'completed';
+                    $status_helper = !empty($this->valid_order_statuses()[$this->order_status]) ? $this->order_status : 'completed';
                     $status = ($verify_status >= 100) ? $status_helper : 'failed';
 
                     // Completed
@@ -569,7 +569,7 @@ function wc_gateway_idpay_init()
                         wp_redirect($woocommerce->cart->get_checkout_url());
 
                         exit;
-                    } elseif (in_array($status, $this->villid_order_statuses())) {
+                    } elseif (in_array($status, $this->valid_order_statuses())) {
 
                         $order->payment_complete($verify_id);
                         $order->update_status($status);
@@ -743,7 +743,7 @@ function wc_gateway_idpay_init()
            /**
            * @return string[]
            */
-            private function villid_order_statuses() {
+            private function valid_order_statuses() {
                 return [
                   'completed' => 'completed',
                   'processing' => 'processing',

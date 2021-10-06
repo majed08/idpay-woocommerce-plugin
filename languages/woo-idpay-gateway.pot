@@ -195,3 +195,15 @@ msgstr ""
 #: includes/wc-gateway-idpay-init.php:550
 msgid "Please try again or contact the site administrator in case of a problem."
 msgstr ""
+
+#: includes/wc-gateway-idpay-init.php:550
+msgid "Order status"
+msgstr ""
+
+#: includes/wc-gateway-idpay-init.php:550
+msgid "Choose order status"
+msgstr ""
+
+#: includes/wc-gateway-idpay-init.php:550
+msgid "You can choose order status after payment"
+msgstr ""

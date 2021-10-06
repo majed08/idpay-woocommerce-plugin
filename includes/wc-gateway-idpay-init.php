@@ -112,6 +112,13 @@ function wc_gateway_idpay_init()
              */
             protected $verify_endpoint;
 
+            /**
+             * The Order Status
+             *
+             * @var string
+             */
+            protected $order_status;
+
 
             /**
              * Constructor for the gateway.
@@ -136,6 +143,8 @@ function wc_gateway_idpay_init()
 
                 $this->api_key = $this->get_option('api_key');
                 $this->sandbox = $this->get_option('sandbox');
+
+                $this->order_status = $this->get_option('order_status');
 
                 $this->payment_endpoint = 'https://api.idpay.ir/v1.1/payment';
                 $this->verify_endpoint = 'https://api.idpay.ir/v1.1/payment/verify';
@@ -226,6 +235,13 @@ function wc_gateway_idpay_init()
                         'description' => __('If you check this option, the gateway works in test (sandbox) mode.', 'woo-idpay-gateway'),
                         'type' => 'checkbox',
                         'default' => 'no',
+                    ),
+                    'order_status' => array(
+                        'title' => __('Order status', 'woo-idpay-gateway'),
+                        'label' => __('Choose order status', 'woo-idpay-gateway'),
+                        'description' => __('You can choose order status after payment.', 'woo-idpay-gateway'),
+                        'type' => 'select',
+                        'options' => $this->villid_order_statuses(),
                     ),
                     'message_confing' => array(
                         'title' => __('Payment message configuration', 'woo-idpay-gateway'),
@@ -513,11 +529,11 @@ function wc_gateway_idpay_init()
                     $verify_hashed_card_no = empty($result->payment->hashed_card_no) ? NULL : $result->payment->hashed_card_no;
                     $verify_date = empty($result->payment->date) ? NULL : $result->payment->date;
 
-                    //check type of product for definition order status
-                    $status_helper = ($this->checkDownloadableItem($order)) ? 'completed' : 'processing';
+                    // Check status
+                    $status_helper = !empty($this->villid_order_statuses()[$this->order_status]) ? $this->order_status : 'completed';
                     $status = ($verify_status >= 100) ? $status_helper : 'failed';
 
-                    //completed
+                    // Completed
                     $note = sprintf(__('Transaction payment status: %s', 'woo-idpay-gateway'), $verify_status);
                     $note .= '<br/>';
                     $note .= sprintf(__('IDPay tracking id: %s', 'woo-idpay-gateway'), $verify_track_id);
@@ -553,7 +569,7 @@ function wc_gateway_idpay_init()
                         wp_redirect($woocommerce->cart->get_checkout_url());
 
                         exit;
-                    } elseif ($status == 'processing' or $status == 'completed') {
+                    } elseif (in_array($status, $this->villid_order_statuses())) {
 
                         $order->payment_complete($verify_id);
                         $order->update_status($status);
@@ -663,7 +679,6 @@ function wc_gateway_idpay_init()
                 return FALSE;
             }
 
-
             /**
              * @param null $msgNumber
              * @return string
@@ -725,20 +740,14 @@ function wc_gateway_idpay_init()
 
             }
 
-            /**
-             * @param $order
-             * @return bool
-             */
-            public function checkDownloadableItem($order) {
-              foreach ( $order->get_items() as $item ) {
-                if ( $item->is_type( 'line_item' ) ) {
-                  $product = $item->get_product();
-                  if ( $product && ($product->is_downloadable() || $product->has_file()) ) {
-                    return true;
-                  }
-                }
-              }
-              return false;
+           /**
+           * @return string[]
+           */
+            private function villid_order_statuses() {
+                return [
+                  'completed' => 'completed',
+                  'processing' => 'processing',
+                ];
             }
         }
 

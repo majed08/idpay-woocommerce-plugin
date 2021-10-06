@@ -35,7 +35,7 @@ Thank you so much for using IDPay Payment Gateway.
 = 2.1.3, October 4, 2021 =
 * Updated plugin info.
 * Set timeout.
-* Ability to change order status.
+* Ability to change order status after payment.
 
 = 2.1.2, April 25, 2021 =
 * Change orders status.

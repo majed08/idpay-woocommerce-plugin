@@ -455,8 +455,8 @@ function wc_gateway_idpay_init()
                     exit;
                 }
 
-                //check Double Spending
-                if ($this->double_spending_occurred($order_id, $id)) {
+               //Check Double Spending and Order valid status
+               if (empty($this->valid_order_statuses()[$this->order_status]) || $this->double_spending_occurred($order_id, $id)) {
                    $this->idpay_display_failed_message($order_id, 0);
                    $note = $this->otherStatusMessages(0);
                    $order->add_order_note($note);
@@ -569,16 +569,15 @@ function wc_gateway_idpay_init()
                         wp_redirect($woocommerce->cart->get_checkout_url());
 
                         exit;
-                    } elseif (in_array($status, $this->valid_order_statuses())) {
-
-                        $order->payment_complete($verify_id);
-                        $order->update_status($status);
-                        $woocommerce->cart->empty_cart();
-                        $this->idpay_display_success_message($order_id);
-                        wp_redirect(add_query_arg('wc_status', 'success', $this->get_return_url($order)));
-
-                        exit;
                     }
+
+                    $order->payment_complete($verify_id);
+                    $order->update_status($status);
+                    $woocommerce->cart->empty_cart();
+                    $this->idpay_display_success_message($order_id);
+                    wp_redirect(add_query_arg('wc_status', 'success', $this->get_return_url($order)));
+
+                    exit;
                 }
             }
 
@@ -685,53 +684,52 @@ function wc_gateway_idpay_init()
              */
             public function otherStatusMessages($msgNumber = null)
             {
-
                 switch ($msgNumber) {
-                    case "1":
-                        $msg = "پرداخت انجام نشده است";
+                    case '1':
+                        $msg = 'پرداخت انجام نشده است';
                         break;
-                    case "2":
-                        $msg = "پرداخت ناموفق بوده است";
+                    case '2':
+                        $msg = 'پرداخت ناموفق بوده است';
                         break;
-                    case "3":
-                        $msg = "خطا رخ داده است";
+                    case '3':
+                        $msg = 'خطا رخ داده است';
                         break;
-                    case "4":
-                        $msg = "بلوکه شده";
+                    case '4':
+                        $msg = 'بلوکه شده';
                         break;
-                    case "5":
-                        $msg = "برگشت به پرداخت کننده";
+                    case '5':
+                        $msg = 'برگشت به پرداخت کننده';
                         break;
-                    case "6":
-                        $msg = "برگشت خورده سیستمی";
+                    case '6':
+                        $msg = 'برگشت خورده سیستمی';
                         break;
-                    case "7":
-                        $msg = "انصراف از پرداخت";
+                    case '7':
+                        $msg = 'انصراف از پرداخت';
                         break;
-                    case "8":
-                        $msg = "به درگاه پرداخت منتقل شد";
+                    case '8':
+                        $msg = 'به درگاه پرداخت منتقل شد';
                         break;
-                    case "10":
-                        $msg = "در انتظار تایید پرداخت";
+                    case '10':
+                        $msg = 'در انتظار تایید پرداخت';
                         break;
-                    case "100":
-                        $msg = "پرداخت تایید شده است";
+                    case '100':
+                        $msg = 'پرداخت تایید شده است';
                         break;
-                    case "101":
-                        $msg = "پرداخت قبلا تایید شده است";
+                    case '101':
+                        $msg = 'پرداخت قبلا تایید شده است';
                         break;
-                    case "200":
-                        $msg = "به دریافت کننده واریز شد";
+                    case '200':
+                        $msg = 'به دریافت کننده واریز شد';
                         break;
-                    case "0":
-                        $msg = "سواستفاده از تراکنش قبلی";
+                    case '0':
+                        $msg = 'سواستفاده از تراکنش قبلی';
                         break;
-                    case "404":
-                        $msg = "واحد پول انتخاب شده پشتیبانی نمی شود.";
+                    case '404':
+                        $msg = 'واحد پول انتخاب شده پشتیبانی نمی شود.';
                         $msgNumber = '404';
                         break;
                     case null:
-                        $msg = "خطا دور از انتظار";
+                        $msg = 'خطا دور از انتظار';
                         $msgNumber = '1000';
                         break;
                 }

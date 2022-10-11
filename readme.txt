@@ -33,7 +33,9 @@ Thank you so much for using IDPay Payment Gateway.
 == Changelog ==
 
 = 2.2.0, June 18, 2022 =
-* Tested with WordPress 6.0.
+* Tested Up With Wordpress 6.0 And WooCommerce Plugin 6.9.4
+* Check Double Spending Correct
+* Check Does Not Xss Attack Correct
 
 = 2.1.3, October 4, 2021 =
 * Updated plugin info.

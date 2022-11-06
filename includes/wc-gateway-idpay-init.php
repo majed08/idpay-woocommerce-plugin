@@ -242,6 +242,7 @@ function wc_gateway_idpay_init()
                         'description' => __('You can choose order status after payment.', 'woo-idpay-gateway'),
                         'type' => 'select',
                         'options' => $this->valid_order_statuses(),
+                        'default' => 'completed',
                     ),
                     'message_confing' => array(
                         'title' => __('Payment message configuration', 'woo-idpay-gateway'),
@@ -456,7 +457,7 @@ function wc_gateway_idpay_init()
                 }
 
                //Check Double Spending and Order valid status
-               if (empty($this->valid_order_statuses()[$this->order_status]) || $this->double_spending_occurred($order_id, $id)) {
+               if ($this->double_spending_occurred($order_id, $id)) {
                    $this->idpay_display_failed_message($order_id, 0);
                    $note = $this->otherStatusMessages(0);
                    $order->add_order_note($note);

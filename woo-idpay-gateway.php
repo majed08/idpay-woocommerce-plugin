@@ -3,14 +3,14 @@
  * Plugin Name: IDPay payment gateway for Woocommerce
  * Author: IDPay
  * Description: <a href="https://idpay.ir">IDPay</a> secure payment gateway for Woocommerce.
- * Version: 2.2.0
+ * Version: 2.2.3
  * Author URI: https://idpay.ir
  * Author Email: info@idpay.ir
  * Text Domain: woo-idpay-gateway
  * Domain Path: /languages/
  *
  * WC requires at least: 3.0
- * WC tested up to: 6.6
+ * WC tested up to: 6.1
  */
 
 if ( ! defined( 'ABSPATH' ) ) {

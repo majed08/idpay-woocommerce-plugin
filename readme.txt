@@ -1,8 +1,8 @@
-=== IDPay Payment Gateway for Woocommerce ===
-Contributors: majidlotfinia, jazaali, imikiani, vispa, mnbp1371,MimDeveloper.Tv(Mohammad Malek)
+﻿=== IDPay Payment Gateway for Woocommerce ===
+Contributors: mnbp1371 , MimDeveloper.Tv(Mohammad-Malek)
 Tags: woocommerce, payment, idpay, gateway, آیدی پی
-Stable tag: 2.2.3
-Tested up to: 6.1
+Stable tag: 2.2.4
+Tested up to: 6.4.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -13,9 +13,6 @@ License URI: http://www.gnu.org/licenses/gpl-2.0.html
 [IDPay](https://idpay.ir) is one of the Financial Technology providers in Iran.
 
 IDPay provides some payment services and this plugin enables the IDPay's payment gateway for Woocommerce.
-
-========== Update ============
-******* if update plugin After >= 2.2  : You Must Save Setting Again *******
 
 == Installation ==
 
@@ -36,10 +33,9 @@ Thank you so much for using IDPay Payment Gateway.
 == Changelog ==
 
 = 2.2.3, June 18, 2022 =
-* Tested Up With Wordpress 6.1 And WooCommerce Plugin 7.0
+* Tested Up With Wordpress 6.4.1 And WooCommerce Plugin 7.2
 * Check Double Spending Correct
 * Check Does Not Xss Attack Correct
-* add Manually Final Payment Status
 
 = 2.1.3, October 4, 2021 =
 * Updated plugin info.

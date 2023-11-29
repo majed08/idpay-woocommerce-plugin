@@ -309,10 +309,10 @@ function wc_gateway_idpay_init()
                 }
 
                 // Save ID of this transaction
-                update_post_meta($order_id, 'idpay_transaction_id', $result->id);
+                IdOrder::updateOrderMetadata($order_id, 'idpay_transaction_id', $result->id);
 
                 // Set remote status of the transaction to 1 as it's primary value.
-                update_post_meta($order_id, 'idpay_transaction_status', 1);
+	            IdOrder::updateOrderMetadata($order_id, 'idpay_transaction_status', 1);
 
                 $note = sprintf(__('transaction id: %s', 'woo-idpay-gateway'), $result->id);
                 $order->add_order_note($note);
@@ -364,7 +364,7 @@ function wc_gateway_idpay_init()
                     exit;
                 }
 
-                if (get_post_meta($order_id, 'idpay_transaction_status', true) >= 100) {
+                if (IdOrder::getOrderMetadata($order_id, 'idpay_transaction_status') >= 100) {
                     $this->idpay_display_success_message($order_id);
                     wp_redirect(add_query_arg('wc_status', 'success', $this->get_return_url($order)));
 
@@ -372,10 +372,10 @@ function wc_gateway_idpay_init()
                 }
 
                 // Stores order's meta data.
-                update_post_meta($order_id, 'idpay_transaction_status', $status);
-                update_post_meta($order_id, 'idpay_track_id', $track_id);
-                update_post_meta($order_id, 'idpay_transaction_id', $id);
-                update_post_meta($order_id, 'idpay_transaction_order_id', $order_id);
+	            IdOrder::updateOrderMetadata($order_id, 'idpay_transaction_status', $status);
+	            IdOrder::updateOrderMetadata($order_id, 'idpay_track_id', $track_id);
+	            IdOrder::updateOrderMetadata($order_id, 'idpay_transaction_id', $id);
+	            IdOrder::updateOrderMetadata($order_id, 'idpay_transaction_order_id', $order_id);
 
                 if ($status != 10) {
                     $order->update_status('failed');
@@ -400,7 +400,7 @@ function wc_gateway_idpay_init()
                 $sandbox = $this->sandbox == 'no' ? 'false' : 'true';
 
                 $data = array(
-                    'id' => get_post_meta($order_id, 'idpay_transaction_id', true),
+                    'id' => IdOrder::getOrderMetadata($order_id, 'idpay_transaction_id'),
                     'order_id' => $order_id,
                 );
 
@@ -474,13 +474,13 @@ function wc_gateway_idpay_init()
                     $order->add_order_note($note);
 
                     // Updates order's meta data after verifying the payment.
-                    update_post_meta($order_id, 'idpay_transaction_status', $verify_status);
-                    update_post_meta($order_id, 'idpay_track_id', $verify_track_id);
-                    update_post_meta($order_id, 'idpay_transaction_id', $verify_id);
-                    update_post_meta($order_id, 'idpay_transaction_order_id', $verify_order_id);
-                    update_post_meta($order_id, 'idpay_transaction_amount', $verify_amount);
-                    update_post_meta($order_id, 'idpay_payment_card_no', $verify_card_no);
-                    update_post_meta($order_id, 'idpay_payment_date', $verify_date);
+	                IdOrder::updateOrderMetadata($order_id, 'idpay_transaction_status', $verify_status);
+	                IdOrder::updateOrderMetadata($order_id, 'idpay_track_id', $verify_track_id);
+	                IdOrder::updateOrderMetadata($order_id, 'idpay_transaction_id', $verify_id);
+	                IdOrder::updateOrderMetadata($order_id, 'idpay_transaction_order_id', $verify_order_id);
+	                IdOrder::updateOrderMetadata($order_id, 'idpay_transaction_amount', $verify_amount);
+	                IdOrder::updateOrderMetadata($order_id, 'idpay_payment_card_no', $verify_card_no);
+	                IdOrder::updateOrderMetadata($order_id, 'idpay_payment_date', $verify_date);
 
                     $currency = $order->get_currency();
                     $currency = apply_filters('WC_IDPay_Currency', $currency, $order_id);
@@ -526,7 +526,7 @@ function wc_gateway_idpay_init()
             /* Shows a success message &  This message is configured at the admin page of the gateway. */
             private function idpay_display_success_message($order_id)
             {
-                $track_id = get_post_meta($order_id, 'idpay_track_id', true);
+                $track_id = IdOrder::getOrderMetadata($order_id, 'idpay_track_id');
                 $notice = wpautop(wptexturize($this->success_message));
                 $notice = str_replace("{track_id}", $track_id, $notice);
                 $notice = str_replace("{order_id}", $order_id, $notice);
@@ -555,7 +555,7 @@ function wc_gateway_idpay_init()
               This message is configured at the admin page of the gateway. */
             private function idpay_display_failed_message($order_id, $msgNumber = null)
             {
-                $track_id = get_post_meta($order_id, 'idpay_track_id', true);
+                $track_id = IdOrder::getOrderMetadata($order_id, 'idpay_track_id');
                 $msg = $this->otherStatusMessages($msgNumber);
                 $notice = wpautop(wptexturize($this->failed_message));
                 $notice = str_replace("{track_id}", $track_id, $notice);
@@ -567,7 +567,7 @@ function wc_gateway_idpay_init()
             /** Checks if double-spending is occurred */
             private function double_spending_occurred($order_id, $remote_id)
             {
-                if (get_post_meta($order_id, 'idpay_transaction_id', true) != $remote_id) {
+                if (IdOrder::getOrderMetadata($order_id, 'idpay_transaction_id') != $remote_id) {
                     return true;
                 }
 
@@ -666,6 +666,7 @@ function wc_gateway_idpay_init()
 				        return 0;
 		        }
 	        }
+
 
 
 		}

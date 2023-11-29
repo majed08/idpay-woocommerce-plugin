@@ -24,4 +24,6 @@ function woo_idpay_gateway_load()
 }
 
 add_action('init', 'woo_idpay_gateway_load');
+
+require_once(plugin_dir_path(__FILE__) . 'includes/IdOrder.php');
 require_once(plugin_dir_path(__FILE__) . 'includes/wc-gateway-idpay-init.php');

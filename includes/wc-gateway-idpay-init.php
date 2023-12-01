@@ -312,7 +312,7 @@ function wc_gateway_idpay_init()
                 IdOrder::updateOrderMetadata($order_id, 'idpay_transaction_id', $result->id);
 
                 // Set remote status of the transaction to 1 as it's primary value.
-	            IdOrder::updateOrderMetadata($order_id, 'idpay_transaction_status', 1);
+                IdOrder::updateOrderMetadata($order_id, 'idpay_transaction_status', 1);
 
                 $note = sprintf(__('transaction id: %s', 'woo-idpay-gateway'), $result->id);
                 $order->add_order_note($note);
@@ -372,10 +372,10 @@ function wc_gateway_idpay_init()
                 }
 
                 // Stores order's meta data.
-	            IdOrder::updateOrderMetadata($order_id, 'idpay_transaction_status', $status);
-	            IdOrder::updateOrderMetadata($order_id, 'idpay_track_id', $track_id);
-	            IdOrder::updateOrderMetadata($order_id, 'idpay_transaction_id', $id);
-	            IdOrder::updateOrderMetadata($order_id, 'idpay_transaction_order_id', $order_id);
+                IdOrder::updateOrderMetadata($order_id, 'idpay_transaction_status', $status);
+                IdOrder::updateOrderMetadata($order_id, 'idpay_track_id', $track_id);
+                IdOrder::updateOrderMetadata($order_id, 'idpay_transaction_id', $id);
+                IdOrder::updateOrderMetadata($order_id, 'idpay_transaction_order_id', $order_id);
 
                 if ($status != 10) {
                     $order->update_status('failed');
@@ -474,13 +474,13 @@ function wc_gateway_idpay_init()
                     $order->add_order_note($note);
 
                     // Updates order's meta data after verifying the payment.
-	                IdOrder::updateOrderMetadata($order_id, 'idpay_transaction_status', $verify_status);
-	                IdOrder::updateOrderMetadata($order_id, 'idpay_track_id', $verify_track_id);
-	                IdOrder::updateOrderMetadata($order_id, 'idpay_transaction_id', $verify_id);
-	                IdOrder::updateOrderMetadata($order_id, 'idpay_transaction_order_id', $verify_order_id);
-	                IdOrder::updateOrderMetadata($order_id, 'idpay_transaction_amount', $verify_amount);
-	                IdOrder::updateOrderMetadata($order_id, 'idpay_payment_card_no', $verify_card_no);
-	                IdOrder::updateOrderMetadata($order_id, 'idpay_payment_date', $verify_date);
+                    IdOrder::updateOrderMetadata($order_id, 'idpay_transaction_status', $verify_status);
+                    IdOrder::updateOrderMetadata($order_id, 'idpay_track_id', $verify_track_id);
+                    IdOrder::updateOrderMetadata($order_id, 'idpay_transaction_id', $verify_id);
+                    IdOrder::updateOrderMetadata($order_id, 'idpay_transaction_order_id', $verify_order_id);
+                    IdOrder::updateOrderMetadata($order_id, 'idpay_transaction_amount', $verify_amount);
+                    IdOrder::updateOrderMetadata($order_id, 'idpay_payment_card_no', $verify_card_no);
+                    IdOrder::updateOrderMetadata($order_id, 'idpay_payment_date', $verify_date);
 
                     $currency = $order->get_currency();
                     $currency = apply_filters('WC_IDPay_Currency', $currency, $order_id);
@@ -638,38 +638,35 @@ function wc_gateway_idpay_init()
             }
 
             public function wc_idpay_get_amount($amount, $currency)
-	        {
-		        switch (strtolower($currency)) {
-			        case strtolower('IRR'):
-			        case strtolower('RIAL'):
-				        return $amount;
+            {
+                switch (strtolower($currency)) {
+                    case strtolower('IRR'):
+                    case strtolower('RIAL'):
+                        return $amount;
 
-			        case strtolower('تومان ایران'):
-			        case strtolower('تومان'):
-			        case strtolower('IRT'):
-			        case strtolower('Iranian_TOMAN'):
-			        case strtolower('Iran_TOMAN'):
-			        case strtolower('Iranian-TOMAN'):
-			        case strtolower('Iran-TOMAN'):
-			        case strtolower('TOMAN'):
-			        case strtolower('Iran TOMAN'):
-			        case strtolower('Iranian TOMAN'):
-				        return $amount * 10;
+                    case strtolower('تومان ایران'):
+                    case strtolower('تومان'):
+                    case strtolower('IRT'):
+                    case strtolower('Iranian_TOMAN'):
+                    case strtolower('Iran_TOMAN'):
+                    case strtolower('Iranian-TOMAN'):
+                    case strtolower('Iran-TOMAN'):
+                    case strtolower('TOMAN'):
+                    case strtolower('Iran TOMAN'):
+                    case strtolower('Iranian TOMAN'):
+                        return $amount * 10;
 
-			        case strtolower('IRHR'):
-				        return $amount * 1000;
+                    case strtolower('IRHR'):
+                        return $amount * 1000;
 
-			        case strtolower('IRHT'):
-				        return $amount * 10000;
+                    case strtolower('IRHT'):
+                        return $amount * 10000;
 
-			        default:
-				        return 0;
-		        }
-	        }
-
-
-
-		}
+                    default:
+                        return 0;
+                }
+            }
+        }
     }
 }
 

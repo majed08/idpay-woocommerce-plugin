@@ -4,26 +4,8 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-/**
- * Initialize the IDPAY gateway.
- *
- * When the internal hook 'plugins_loaded' is fired, this function would be
- * executed and after that, a Woocommerce hook (woocommerce_payment_gateways)
- * which defines a new gateway, would be triggered.
- *
- * Therefore whenever all plugins are loaded, the IDPAY gateway would be
- * initialized.
- *
- * Also another Woocommerce hooks would be fired in this process:
- *  - woocommerce_currencies
- *  - woocommerce_currency_symbol
- *
- * The two above hooks allows the gateway to define some currencies and their
- * related symbols.
- */
 function wc_gateway_idpay_init()
 {
-
     if (class_exists('WC_Payment_Gateway')) {
         add_filter('woocommerce_payment_gateways', 'wc_add_idpay_gateway');
 
@@ -52,7 +34,6 @@ function wc_gateway_idpay_init()
         function wc_idpay_currency_symbol($currency_symbol, $currency)
         {
             switch ($currency) {
-
                 case 'IRHR':
                     $currency_symbol = __('IRHR', 'woo-idpay-gateway');
                     break;
@@ -68,67 +49,35 @@ function wc_gateway_idpay_init()
         class WC_IDPay extends WC_Payment_Gateway
         {
 
-            /**
-             * The API Key
-             *
-             * @var string
-             */
+            /* The API Key */
             protected $api_key;
 
-            /**
-             * The sandbox mode.
-             *
-             * Indicates weather the gateway is in the test or the live mode.
-             *
-             * @var string
-             */
+            /* The sandbox mode.  */
             protected $sandbox;
 
-            /**
-             * The payment success message.
-             *
-             * @var string
-             */
+            /* The payment success message. */
             protected $success_message;
 
-            /**
-             * The payment failure message.
-             *
-             * @var string
-             */
+            /* The payment failure message.  */
             protected $failed_message;
 
-            /**
-             * The payment endpoint
-             *
-             * @var string
-             */
+            /* The payment endpoint */
             protected $payment_endpoint;
 
-            /**
-             * The verify endpoint
-             *
-             * @var string
-             */
+            /* The verify endpoint */
             protected $verify_endpoint;
 
-            /**
-             * The Order Status
-             *
-             * @var string
-             */
+            /* The Order Status  */
             protected $order_status;
 
 
-            /**
-             * Constructor for the gateway.
-             */
+            /* Constructor for the gateway. */
             public function __construct()
             {
                 $this->id = 'WC_IDPay';
                 $this->method_title = __('IDPay', 'woo-idpay-gateway');
                 $this->method_description = __('Redirects customers to IDPay to process their payments.', 'woo-idpay-gateway');
-                $this->has_fields = FALSE;
+                $this->has_fields = false;
                 $this->icon = apply_filters('WC_IDPay_logo', dirname(WP_PLUGIN_URL . '/' . plugin_basename(dirname(__FILE__))) . '/assets/images/logo.png');
 
                 // Load the form fields.
@@ -174,27 +123,20 @@ function wc_gateway_idpay_init()
                 ));
             }
 
-            /**
-             * Admin options for the gateway.
-             */
+            /* Admin options for the gateway. */
             public function admin_options()
             {
                 parent::admin_options();
             }
 
-            /**
-             * Processes and saves the gateway options in the admin page.
-             *
-             * @return bool|void
-             */
+            /* Processes and saves the gateway options in the admin page.
+            @return bool|void */
             public function process_admin_options()
             {
                 parent::process_admin_options();
             }
 
-            /**
-             * Initiate some form fields for the gateway settings.
-             */
+            /* Initiate some form fields for the gateway settings. */
             public function init_form_fields()
             {
                 // Populates the inherited property $form_fields.
@@ -264,28 +206,19 @@ function wc_gateway_idpay_init()
                 ));
             }
 
-            /**
-             * Process the payment and return the result.
-             *
-             * see process_order_payment() in the Woocommerce APIs
-             *
-             * @param int $order_id
-             *
-             * @return array
-             */
+            /*  Process the payment and return the result. &  see process_order_payment() in the Woocommerce APIs
+             * @return array  */
             public function process_payment($order_id)
             {
                 $order = new WC_Order($order_id);
 
                 return array(
                     'result' => 'success',
-                    'redirect' => $order->get_checkout_payment_url(TRUE),
+                    'redirect' => $order->get_checkout_payment_url(true),
                 );
             }
 
-            /**
-             * Add IDPay Checkout items to receipt page.
-             */
+            /* Add IDPay Checkout items to receipt page. */
             public function idpay_checkout_receipt_page($order_id)
             {
                 global $woocommerce;
@@ -307,7 +240,7 @@ function wc_gateway_idpay_init()
                 $last_name = $customer->get_billing_last_name();
                 $name = $first_name . ' ' . $last_name;
 
-                $amount = wc_idpay_get_amount(intval($order->get_total()), $currency);
+                $amount = $this->wc_idpay_get_amount(intval($order->get_total()), $currency);
                 $desc = __('Oder number #', 'woo-idpay-gateway') . $order->get_order_number();
                 $callback = add_query_arg('wc_order', $order_id, WC()->api_request_url('wc_idpay'));
 
@@ -376,10 +309,10 @@ function wc_gateway_idpay_init()
                 }
 
                 // Save ID of this transaction
-                update_post_meta($order_id, 'idpay_transaction_id', $result->id);
+                IdOrder::updateOrderMetadata($order_id, 'idpay_transaction_id', $result->id);
 
                 // Set remote status of the transaction to 1 as it's primary value.
-                update_post_meta($order_id, 'idpay_transaction_status', 1);
+                IdOrder::updateOrderMetadata($order_id, 'idpay_transaction_status', 1);
 
                 $note = sprintf(__('transaction id: %s', 'woo-idpay-gateway'), $result->id);
                 $order->add_order_note($note);
@@ -388,9 +321,7 @@ function wc_gateway_idpay_init()
                 exit;
             }
 
-            /**
-             * Handles the return from processing the payment.
-             */
+            /* Handles the return from processing the payment. */
             public function idpay_checkout_return_handler()
             {
                 global $woocommerce;
@@ -402,8 +333,7 @@ function wc_gateway_idpay_init()
                     $track_id = sanitize_text_field($_POST['track_id']);
                     $id = sanitize_text_field($_POST['id']);
                     $order_id = sanitize_text_field($_POST['order_id']);
-                }
-                elseif ($method == 'GET') {
+                } elseif ($method == 'GET') {
                     $status = sanitize_text_field($_GET['status']);
                     $track_id = sanitize_text_field($_GET['track_id']);
                     $id = sanitize_text_field($_GET['id']);
@@ -434,7 +364,7 @@ function wc_gateway_idpay_init()
                     exit;
                 }
 
-                if (get_post_meta($order_id, 'idpay_transaction_status', TRUE) >= 100) {
+                if (IdOrder::getOrderMetadata($order_id, 'idpay_transaction_status') >= 100) {
                     $this->idpay_display_success_message($order_id);
                     wp_redirect(add_query_arg('wc_status', 'success', $this->get_return_url($order)));
 
@@ -442,10 +372,10 @@ function wc_gateway_idpay_init()
                 }
 
                 // Stores order's meta data.
-                update_post_meta($order_id, 'idpay_transaction_status', $status);
-                update_post_meta($order_id, 'idpay_track_id', $track_id);
-                update_post_meta($order_id, 'idpay_transaction_id', $id);
-                update_post_meta($order_id, 'idpay_transaction_order_id', $order_id);
+                IdOrder::updateOrderMetadata($order_id, 'idpay_transaction_status', $status);
+                IdOrder::updateOrderMetadata($order_id, 'idpay_track_id', $track_id);
+                IdOrder::updateOrderMetadata($order_id, 'idpay_transaction_id', $id);
+                IdOrder::updateOrderMetadata($order_id, 'idpay_transaction_order_id', $order_id);
 
                 if ($status != 10) {
                     $order->update_status('failed');
@@ -457,20 +387,20 @@ function wc_gateway_idpay_init()
                 }
 
                //Check Double Spending and Order valid status
-               if ($this->double_spending_occurred($order_id, $id)) {
-                   $this->idpay_display_failed_message($order_id, 0);
-                   $note = $this->otherStatusMessages(0);
-                   $order->add_order_note($note);
-                   wp_redirect($woocommerce->cart->get_checkout_url());
+                if ($this->double_spending_occurred($order_id, $id)) {
+                    $this->idpay_display_failed_message($order_id, 0);
+                    $note = $this->otherStatusMessages(0);
+                    $order->add_order_note($note);
+                    wp_redirect($woocommerce->cart->get_checkout_url());
 
-                   exit;
+                    exit;
                 }
 
                 $api_key = $this->api_key;
                 $sandbox = $this->sandbox == 'no' ? 'false' : 'true';
 
                 $data = array(
-                    'id' => get_post_meta($order_id, 'idpay_transaction_id', TRUE),
+                    'id' => IdOrder::getOrderMetadata($order_id, 'idpay_transaction_id'),
                     'order_id' => $order_id,
                 );
 
@@ -520,15 +450,14 @@ function wc_gateway_idpay_init()
 
                     exit;
                 } else {
-
-                    $verify_status = empty($result->status) ? NULL : $result->status;
-                    $verify_track_id = empty($result->track_id) ? NULL : $result->track_id;
-                    $verify_id = empty($result->id) ? NULL : $result->id;
-                    $verify_order_id = empty($result->order_id) ? NULL : $result->order_id;
-                    $verify_amount = empty($result->amount) ? NULL : $result->amount;
-                    $verify_card_no = empty($result->payment->card_no) ? NULL : $result->payment->card_no;
-                    $verify_hashed_card_no = empty($result->payment->hashed_card_no) ? NULL : $result->payment->hashed_card_no;
-                    $verify_date = empty($result->payment->date) ? NULL : $result->payment->date;
+                    $verify_status = empty($result->status) ? null : $result->status;
+                    $verify_track_id = empty($result->track_id) ? null : $result->track_id;
+                    $verify_id = empty($result->id) ? null : $result->id;
+                    $verify_order_id = empty($result->order_id) ? null : $result->order_id;
+                    $verify_amount = empty($result->amount) ? null : $result->amount;
+                    $verify_card_no = empty($result->payment->card_no) ? null : $result->payment->card_no;
+                    $verify_hashed_card_no = empty($result->payment->hashed_card_no) ? null : $result->payment->hashed_card_no;
+                    $verify_date = empty($result->payment->date) ? null : $result->payment->date;
 
                     // Check status
                     $status_helper = !empty($this->valid_order_statuses()[$this->order_status]) ? $this->order_status : 'completed';
@@ -545,17 +474,17 @@ function wc_gateway_idpay_init()
                     $order->add_order_note($note);
 
                     // Updates order's meta data after verifying the payment.
-                    update_post_meta($order_id, 'idpay_transaction_status', $verify_status);
-                    update_post_meta($order_id, 'idpay_track_id', $verify_track_id);
-                    update_post_meta($order_id, 'idpay_transaction_id', $verify_id);
-                    update_post_meta($order_id, 'idpay_transaction_order_id', $verify_order_id);
-                    update_post_meta($order_id, 'idpay_transaction_amount', $verify_amount);
-                    update_post_meta($order_id, 'idpay_payment_card_no', $verify_card_no);
-                    update_post_meta($order_id, 'idpay_payment_date', $verify_date);
+                    IdOrder::updateOrderMetadata($order_id, 'idpay_transaction_status', $verify_status);
+                    IdOrder::updateOrderMetadata($order_id, 'idpay_track_id', $verify_track_id);
+                    IdOrder::updateOrderMetadata($order_id, 'idpay_transaction_id', $verify_id);
+                    IdOrder::updateOrderMetadata($order_id, 'idpay_transaction_order_id', $verify_order_id);
+                    IdOrder::updateOrderMetadata($order_id, 'idpay_transaction_amount', $verify_amount);
+                    IdOrder::updateOrderMetadata($order_id, 'idpay_payment_card_no', $verify_card_no);
+                    IdOrder::updateOrderMetadata($order_id, 'idpay_payment_date', $verify_date);
 
                     $currency = $order->get_currency();
                     $currency = apply_filters('WC_IDPay_Currency', $currency, $order_id);
-                    $amount = wc_idpay_get_amount(intval($order->get_total()), $currency);
+                    $amount = $this->wc_idpay_get_amount(intval($order->get_total()), $currency);
 
                     if (empty($verify_status) || empty($verify_track_id) || empty($verify_amount) || $verify_amount != $amount) {
                         $note = __('Error in transaction status or inconsistency with payment gateway information', 'woo-idpay-gateway');
@@ -582,11 +511,7 @@ function wc_gateway_idpay_init()
                 }
             }
 
-            /**
-             * Shows an invalid order message.
-             *
-             * @see idpay_checkout_return_handler().
-             */
+            /* Shows an invalid order message. */
             private function idpay_display_invalid_order_message($msgNumber = null)
             {
                 $msg = $this->otherStatusMessages($msgNumber);
@@ -598,34 +523,18 @@ function wc_gateway_idpay_init()
                 wc_add_notice($notice, 'error');
             }
 
-            /**
-             * Shows a success message
-             *
-             * This message is configured at the admin page of the gateway.
-             *
-             * @see idpay_checkout_return_handler()
-             *
-             * @param $order_id
-             */
+            /* Shows a success message &  This message is configured at the admin page of the gateway. */
             private function idpay_display_success_message($order_id)
             {
-                $track_id = get_post_meta($order_id, 'idpay_track_id', TRUE);
+                $track_id = IdOrder::getOrderMetadata($order_id, 'idpay_track_id');
                 $notice = wpautop(wptexturize($this->success_message));
                 $notice = str_replace("{track_id}", $track_id, $notice);
                 $notice = str_replace("{order_id}", $order_id, $notice);
                 wc_add_notice($notice, 'success');
             }
 
-            /**
-             * Calls the gateway endpoints.
-             *
-             * Tries to get response from the gateway for 4 times.
-             *
-             * @param $url
-             * @param $args
-             *
-             * @return array|\WP_Error
-             */
+            /* Calls the gateway endpoints. & Tries to get response from the gateway for 4 times.
+              @return array|\WP_Error */
             private function call_gateway_endpoint($url, $args)
             {
                 $number_of_connection_tries = 4;
@@ -642,18 +551,11 @@ function wc_gateway_idpay_init()
                 return $response;
             }
 
-            /**
-             * Shows a failure message for the unsuccessful payments.
-             *
-             * This message is configured at the admin page of the gateway.
-             *
-             * @see idpay_checkout_return_handler()
-             *
-             * @param $order_id
-             */
+            /* Shows a failure message for the unsuccessful payments.
+              This message is configured at the admin page of the gateway. */
             private function idpay_display_failed_message($order_id, $msgNumber = null)
             {
-                $track_id = get_post_meta($order_id, 'idpay_track_id', TRUE);
+                $track_id = IdOrder::getOrderMetadata($order_id, 'idpay_track_id');
                 $msg = $this->otherStatusMessages($msgNumber);
                 $notice = wpautop(wptexturize($this->failed_message));
                 $notice = str_replace("{track_id}", $track_id, $notice);
@@ -662,27 +564,16 @@ function wc_gateway_idpay_init()
                 wc_add_notice($notice, 'error');
             }
 
-            /**
-             * Checks if double-spending is occurred.
-             *
-             * @param $order_id
-             * @param $remote_id
-             *
-             * @return bool
-             */
+            /** Checks if double-spending is occurred */
             private function double_spending_occurred($order_id, $remote_id)
             {
-                if (get_post_meta($order_id, 'idpay_transaction_id', TRUE) != $remote_id) {
-                    return TRUE;
+                if (IdOrder::getOrderMetadata($order_id, 'idpay_transaction_id') != $remote_id) {
+                    return true;
                 }
 
-                return FALSE;
+                return false;
             }
 
-            /**
-             * @param null $msgNumber
-             * @return string
-             */
             public function otherStatusMessages($msgNumber = null)
             {
                 switch ($msgNumber) {
@@ -736,30 +627,50 @@ function wc_gateway_idpay_init()
                 }
 
                 return $msg . ' -وضعیت: ' . $msgNumber;
-
             }
 
-           /**
-           * @return string[]
-           */
-            private function valid_order_statuses() {
+            private function valid_order_statuses()
+            {
                 return [
                   'completed' => 'completed',
                   'processing' => 'processing',
                 ];
             }
-        }
 
+            public function wc_idpay_get_amount($amount, $currency)
+            {
+                switch (strtolower($currency)) {
+                    case strtolower('IRR'):
+                    case strtolower('RIAL'):
+                        return $amount;
+
+                    case strtolower('تومان ایران'):
+                    case strtolower('تومان'):
+                    case strtolower('IRT'):
+                    case strtolower('Iranian_TOMAN'):
+                    case strtolower('Iran_TOMAN'):
+                    case strtolower('Iranian-TOMAN'):
+                    case strtolower('Iran-TOMAN'):
+                    case strtolower('TOMAN'):
+                    case strtolower('Iran TOMAN'):
+                    case strtolower('Iranian TOMAN'):
+                        return $amount * 10;
+
+                    case strtolower('IRHR'):
+                        return $amount * 1000;
+
+                    case strtolower('IRHT'):
+                        return $amount * 10000;
+
+                    default:
+                        return 0;
+                }
+            }
+        }
     }
 }
 
 
-/**
- * Add a function when hook 'plugins_loaded' is fired.
- *
- * Registers the 'wc_gateway_idpay_init' function to the
- * internal hook of Wordpress: 'plugins_loaded'.
- *
- * @see wc_gateway_idpay_init()
- */
+/* Add a function when hook 'plugins_loaded' is fired. &  Registers the 'wc_gateway_idpay_init' function to the
+   internal hook of Wordpress: 'plugins_loaded'. */
 add_action('plugins_loaded', 'wc_gateway_idpay_init');
